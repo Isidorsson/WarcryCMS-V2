@@ -36,6 +36,7 @@ $allowed = array(
 	'avatars',
 	'manage_user',
 	'topvote',
+	'ticket_manage',
 );
 
 if (in_array($execute, $allowed))
