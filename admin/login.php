@@ -1,41 +1,46 @@
-<?PHP
+<?php
 include_once 'engine/initialize.php';
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<title>AdminCP</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script><link type="text/css" rel="stylesheet" href="data:text/css,">
-<script type="text/javascript" src="login/js/jquery.validate.js"></script>
-<script type="text/javascript" src="login/js/css_browser_selector.js"></script>
-<script type="text/javascript" src="login/js/notifications.js"></script>
-<script type="text/javascript" src="login/js/js.js"></script>
-<link rel="stylesheet" href="login/css/reset.css" type="text/css">
-<link rel="stylesheet" href="login/css/grid.css" type="text/css">
-<link rel="stylesheet" href="login/css/style.css" type="text/css">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warcry Admin Login</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="template/js/jquery-1.7.js"><\/script>');</script>
+  <script src="login/js/jquery.validate.js"></script>
+  <script src="login/js/notifications.js"></script>
+  <script src="login/js/js.js"></script>
+  <link rel="stylesheet" href="login/css/reset.css">
+  <link rel="stylesheet" href="login/css/style.css?v=warcry2026">
 </head>
-<body>
-	<ul id="notifications"></ul>
-	<div id="loginbox" style="display: block; ">
-
-		<?php
-		if ($error = $ERRORS->DoPrint('login'))
-		{
-			echo $error, '<br><br>';
-			unset($error);
-		}			
-		?>
-
-		<a href="#" id="logo">AdminCP</a>
-		<div id="loginform">
-			<form name="login" action="execute.php?take=login" method="post" novalidate>
-				<div id="username_field"><input type="text" name="username" placeholder="Username" class="required" value=""></div>
-				<div id="password_field"><input type="password" name="password" placeholder="Password" class="required" value=""></div>
-				<div id="buttonline">
-					<input type="submit" id="loginbutton" class="float_left width_4" value="Login">
-				</div>
-			</form>
-		</div>
-	</div>
-
-</body></html>
+<body class="warcry-login">
+  <ul id="notifications"></ul>
+  <main class="login-shell">
+    <section class="login-panel">
+      <div class="login-brand">
+        <div class="brand-mark">W</div>
+        <div>
+          <h1>Warcry CMS</h1>
+          <p>Secure Admin Panel</p>
+        </div>
+      </div>
+      <?php
+      if ($error = $ERRORS->DoPrint('login')) {
+        echo '<div class="login-alert">'.$error.'</div>';
+        unset($error);
+      }
+      ?>
+      <form name="login" action="execute.php?take=login" method="post" novalidate class="login-form">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Enter username" class="required" autocomplete="username">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter password" class="required" autocomplete="current-password">
+        <button type="submit" id="loginbutton">Login</button>
+      </form>
+      <div class="login-foot">Warcry Admin • Clean 2026 UI</div>
+    </section>
+  </main>
+</body>
+</html>

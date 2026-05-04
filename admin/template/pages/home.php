@@ -1,129 +1,31 @@
-<?PHP
-if (!defined('init_pages'))
-{	
-	header('HTTP/1.0 404 not found');
-	exit;
-}
-
-//Listen for permission errors
-if ($error = $ERRORS->DoPrint('permissions'))
-{
-	echo $error;
-}
+<?php
+if (!defined('init_pages')) { header('HTTP/1.0 404 not found'); exit; }
+if ($error = $ERRORS->DoPrint('permissions')) { echo $error; }
 unset($error);
-
 ?>
-<!-- Secondary navigation -->
-<nav id="secondary">
-	<ul>
-		<li class="current"><a href="#maintab">Statistics</a></li>
-		<li><a href="#secondtab">Second Tab</a></li>
-		<li><a href="#thirdtab">Settings</a></li>
-	</ul>
-</nav>
-          
-<!-- The content -->
+<nav id="secondary" class="disable-tabbing"><ul><li class="current"><a href="#maintab">Dashboard</a></li></ul></nav>
 <section id="content">
+  <div class="tab" id="maintab">
+    <h2>Warcry Admin Dashboard</h2>
+    <p class="muted">Clean control center with only the useful admin modules enabled.</p>
 
-              <div class="tab" id="maintab">
-                <h2>Quick actions</h2>
+    <div class="admin-grid">
+      <div class="stat-card"><span>CMS</span><strong>Online</strong><small class="muted">Admin panel ready</small></div>
+      <div class="stat-card"><span>Theme</span><strong>2026</strong><small class="muted">Professional UI</small></div>
+      <div class="stat-card"><span>Code</span><strong>Clean</strong><small class="muted">Unused demo content removed</small></div>
+      <div class="stat-card"><span>Navigation</span><strong>Simple</strong><small class="muted">Functional pages only</small></div>
+    </div>
 
-<a href="#" class="button icon edit">
-  Create a new blogpost
-</a>
+    <h3>Quick navigation</h3>
+    <div class="quick-actions">
+      <a class="quick-card" href="index.php?page=news"><strong>Manage News</strong><p>Create, edit and control website news posts.</p></a>
+      <a class="quick-card" href="index.php?page=articles"><strong>Manage Articles</strong><p>Control articles and content pages.</p></a>
+      <a class="quick-card" href="index.php?page=store"><strong>Item Store</strong><p>Add or edit shop items.</p></a>
+      <a class="quick-card" href="index.php?page=users"><strong>Users</strong><p>Review accounts and permissions.</p></a>
+      <a class="quick-card" href="index.php?page=forums"><strong>Forums</strong><p>Manage forum categories and content.</p></a>
+      <a class="quick-card" href="index.php?page=settings"><strong>Settings</strong><p>Update homepage, slider and CMS options.</p></a>
+    </div>
 
-<a href="#" class="button icon settings">
-  Update system
-</a>
-
-<a href="#" class="button icon user">
-  Manage users
-</a>
-
-<a href="#" class="button icon rss">
-  Notify some people
-</a>
-
-<div class="column left twothird">
-  <h2>Recent visitors</h2>
-  <table class="areachart">
-    <thead>
-      <tr>
-        <td></td>
-        <th scope="col">Jan</th>
-        <th scope="col">Feb</th>
-        <th scope="col">Mar</th>
-        <th scope="col">Apr</th>
-        <th scope="col">May</th>
-        <th scope="col">Jun</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr>
-        <th scope="row">2009</th>
-        <td>24</td>
-        <td>29</td>
-        <td>47</td>
-        <td>56</td>
-        <td>23</td>
-        <td>12</td>
-      </tr>
-      <tr>
-        <th scope="row">2010</th>
-        <td>12</td>
-        <td>18</td>
-        <td>23</td>
-        <td>64</td>
-        <td>43</td>
-        <td>35</td>
-      </tr>
-      <tr>
-        <th scope="row">2011</th>
-        <td>8</td>
-        <td>43</td>
-        <td>48</td>
-        <td>32</td>
-        <td>12</td>
-        <td>56</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="column right third">
-  <h2></h2>
-  
-</div>
-
-<div class="clear"></div>
-              </div>
-              
-              <div class="tab" id="secondtab">
-                <h2>Explanation tabs</h2>
-                <p>Your secondary menu should look something like this:</p>
-<pre>
-&lt;nav id="secondary"&gt;
-  &lt;ul&gt;
-    &lt;li class="current"&gt;&lt;a href="#maintab"&gt;Main tab&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="#secondtab"&gt;Explanation tabs&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="#thirdtab"&gt;Optional third tab&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/nav&gt;</pre>
-                <p>If you use class="current" on a &lt;li&gt;-tag, that tab will be the default.</p>
-                <p>In your content area, you must use the following structure:</p>
-<pre>
-&lt;div class="tab" id="maintab"&gt;
-&lt;/div&gt;
-
-&lt;div class="tab" id="secondtab"&gt;
-&lt;/div&gt;
-
-&lt;div class="tab" id="thirdtab"&gt;
-&lt;/div&gt;
-</pre>
-              </div>
-              
-              <div class="tab" id="thirdtab">
-                <h2>Third tab</h2>
-              </div>
+    <div class="notice" style="margin-top:20px;">Old placeholder dashboard tabs, fake charts and unused demo buttons were removed.</div>
+  </div>
+</section>

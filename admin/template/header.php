@@ -7,16 +7,12 @@ $MENU = array(
   array('title'=>'News','page'=>'news','match'=>'news,news-post,news-edit','permission'=>PERMISSION_NEWS),
   array('title'=>'Articles','page'=>'articles','match'=>'articles,new-article,edit-article','permission'=>PERMISSION_ARTICLES),
   array('title'=>'Item Store','page'=>'store','match'=>'store,store-add','permission'=>PERMISSION_STORE),
-  array('title'=>'Premium Store','page'=>'pstore','match'=>'pstore','permission'=>PERMISSION_PSTORE),
   array('title'=>'Media','page'=>'media','match'=>'media,movie-add','permission'=>PERMISSION_MEDIA_MOVIES),
+  array('title'=>'Forums','page'=>'forums','match'=>'forums,forum-cats','permission'=>array(PERMISSION_FORUMS, PERMISSION_FORUM_CATS)),
+  array('title'=>'Users','page'=>'users','match'=>'users,user-preview','permission'=>PERMISSION_PREV_USERS),
+  array('title'=>'Tickets','page'=>'tickets','match'=>'tickets','permission'=>PERMISSION_TICKETS),
   array('title'=>'Changelogs','page'=>'changelogs','match'=>'changelogs','permission'=>false),
   array('title'=>'Settings','page'=>'settings','match'=>'settings','permission'=>false),
-  array('title'=>'Forums','page'=>'forums','match'=>'forums,forum-cats','permission'=>array(PERMISSION_FORUMS, PERMISSION_FORUM_CATS)),
-  array('title'=>'Logs','page'=>'logs','match'=>'logs,logs-fc,logs-customiz,logs-as,logs-sp,logs-igg,logs-lvl,logs-pw,logs-boost','permission'=>PERMISSION_LOGS),
-  array('title'=>'Promo Codes','page'=>'pcodes','match'=>'pcodes','permission'=>PERMISSION_PROMO_CODES),
-  array('title'=>'Users','page'=>'users','match'=>'users,user-preview','permission'=>PERMISSION_PREV_USERS),
-  array('title'=>'Bug Tracker','page'=>'bugtracker','match'=>'bugtracker','permission'=>PERMISSION_PREV_BUGTRACKER),
-  array('title'=>'GM Tickets','page'=>'tickets','match'=>'tickets','permission'=>PERMISSION_TICKETS),
 );
 function warcry_admin_allowed($perm, $CURUSER) {
   if (!$perm) return true;
@@ -37,7 +33,7 @@ function warcry_admin_allowed($perm, $CURUSER) {
   <link rel="stylesheet" href="template/css/edit-box.css">
   <link rel="stylesheet" href="template/css/bbcode-default.css">
   <link rel="stylesheet" href="template/css/media.css">
-  <link rel="stylesheet" href="template/css/main.css?v=17">
+  <link rel="stylesheet" href="template/css/main.css?v=warcry2026">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="template/js/jquery-1.7.js"><\/script>'); var $currentTab = null; $(function(){ $currentTab = $('#maintab'); });</script>
 </head>
