@@ -7,6 +7,9 @@ This version has been cleaned, fixed, and updated for better stability and perfo
 
 [AzerothCore](https://github.com/azerothcore/azerothcore-wotlk)
 ---
+![logo](https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/67d00cf7266d2c75571aebde_Example.svg)
+
+[Discord](https://discord.gg/RcBduqxGG5)
 
 ## 🚀 Features
 
