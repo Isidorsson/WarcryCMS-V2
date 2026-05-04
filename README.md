@@ -1,7 +1,5 @@
 # ![logo](https://i.ibb.co/RpgfR7Wd/Warcry-CMS-Png.png)
 
-# Warcry CMS
-
 Warcry CMS is a modern content management system for World of Warcraft private servers (AzerothCore).
 This version has been cleaned, fixed, and updated for better stability and performance.
 
