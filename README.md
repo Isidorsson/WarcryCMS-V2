@@ -3,7 +3,7 @@
 Warcry CMS is a modern content management system for World of Warcraft private servers (AzerothCore).
 This version has been cleaned, fixed, and updated for better stability and performance.
 
-https://raw.githubusercontent.com/azerothcore/azerothcore.github.io/master/images/logo-github.png AzerothCore
+![logo](https://raw.githubusercontent.com/azerothcore/azerothcore.github.io/master/images/logo-github.png) AzerothCore
 https://github.com/azerothcore/azerothcore-wotlk
 ---
 
