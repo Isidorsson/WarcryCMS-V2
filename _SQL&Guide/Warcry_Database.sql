@@ -1,59 +1,58 @@
 -- --------------------------------------------------------
--- Host:                         192.168.1.2
--- Server version:               10.1.25-MariaDB - mariadb.org binary distribution
--- Server OS:                    Win32
--- HeidiSQL Version:             9.4.0.5125
+-- Hôte:                         127.0.0.1
+-- Version du serveur:           8.4.3 - MySQL Community Server - GPL
+-- SE du serveur:                Win64
+-- HeidiSQL Version:             12.8.0.6908
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- Dumping database structure for warcry
-CREATE DATABASE IF NOT EXISTS `warcry` /*!40100 DEFAULT CHARACTER SET latin1 */;
+-- Listage de la structure de la base pour warcry
+CREATE DATABASE IF NOT EXISTS `warcry` /*!40100 DEFAULT CHARACTER SET latin1 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `warcry`;
 
--- Dumping structure for table warcry.account_data
+-- Listage de la structure de table warcry. account_data
 CREATE TABLE IF NOT EXISTS `account_data` (
-  `id` bigint(20) NOT NULL,
-  `displayName` varchar(32) COLLATE latin1_general_ci NOT NULL,
-  `silver` int(10) NOT NULL DEFAULT '0',
-  `gold` int(10) NOT NULL DEFAULT '0',
-  `cooldowns` text COLLATE latin1_general_ci NOT NULL,
-  `socialData` text COLLATE latin1_general_ci NOT NULL,
-  `birthday` varchar(12) COLLATE latin1_general_ci NOT NULL COMMENT 'MM/DD/YYYY',
-  `gender` varchar(10) COLLATE latin1_general_ci NOT NULL,
-  `country` varchar(2) COLLATE latin1_general_ci NOT NULL DEFAULT 'US',
-  `secretQuestion` tinyint(3) NOT NULL DEFAULT '0',
-  `secretAnswer` varchar(40) COLLATE latin1_general_ci NOT NULL,
-  `avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-  `avatarType` tinyint(2) NOT NULL DEFAULT '0',
-  `rank` tinyint(2) NOT NULL DEFAULT '0',
-  `last_ip` varchar(30) COLLATE latin1_general_ci NOT NULL DEFAULT '0.0.0.0',
-  `admin_last_ip` varchar(30) COLLATE latin1_general_ci NOT NULL DEFAULT '0.0.0.0',
-  `reg_ip` varchar(30) COLLATE latin1_general_ci NOT NULL DEFAULT '0.0.0.0',
+  `id` bigint NOT NULL,
+  `displayName` varchar(32) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `silver` int NOT NULL DEFAULT '0',
+  `gold` int NOT NULL DEFAULT '0',
+  `cooldowns` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `socialData` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `birthday` varchar(12) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL COMMENT 'MM/DD/YYYY',
+  `gender` varchar(10) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `country` varchar(2) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'US',
+  `secretQuestion` tinyint NOT NULL DEFAULT '0',
+  `secretAnswer` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `avatar` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
+  `avatarType` tinyint NOT NULL DEFAULT '0',
+  `rank` tinyint NOT NULL DEFAULT '0',
+  `last_ip` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT '0.0.0.0',
+  `admin_last_ip` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT '0.0.0.0',
+  `reg_ip` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT '0.0.0.0',
   `last_login` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_login2` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `admin_last_login` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `admin_last_login2` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `status` enum('active','disabled','pending') COLLATE latin1_general_ci NOT NULL DEFAULT 'pending',
-  `event` varchar(150) COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
-  `salt` varchar(40) COLLATE latin1_general_ci NOT NULL,
-  `selected_realm` tinyint(2) NOT NULL,
+  `status` enum('active','disabled','pending') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'pending',
+  `event` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
+  `salt` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `selected_realm` tinyint NOT NULL,
   `bt_milestone` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.account_data: 0 rows
-/*!40000 ALTER TABLE `account_data` DISABLE KEYS */;
-/*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
-
--- Dumping structure for table warcry.acp_permissions
+-- Listage de la structure de table warcry. acp_permissions
 CREATE TABLE IF NOT EXISTS `acp_permissions` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint NOT NULL,
   `1` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Give Permissions',
   `2` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'News Management',
   `3` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Articles Management',
@@ -73,430 +72,497 @@ CREATE TABLE IF NOT EXISTS `acp_permissions` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.acp_permissions: 0 rows
-/*!40000 ALTER TABLE `acp_permissions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `acp_permissions` ENABLE KEYS */;
-
--- Dumping structure for table warcry.armorsets
+-- Listage de la structure de table warcry. armorsets
 CREATE TABLE IF NOT EXISTS `armorsets` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `realm` varchar(10) COLLATE latin1_general_ci NOT NULL DEFAULT '-1',
-  `category` int(10) NOT NULL DEFAULT '0',
-  `price` int(10) NOT NULL DEFAULT '0',
-  `tier` varchar(100) COLLATE latin1_general_ci NOT NULL,
-  `class` int(10) NOT NULL DEFAULT '0',
-  `type` varchar(100) COLLATE latin1_general_ci NOT NULL,
-  `items` varchar(500) COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `realm` varchar(10) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT '-1',
+  `category` int NOT NULL DEFAULT '0',
+  `price` int NOT NULL DEFAULT '0',
+  `tier` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `class` int NOT NULL DEFAULT '0',
+  `type` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `items` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.armorsets: 0 rows
+-- Listage des données de la table warcry.armorsets : 0 rows
 /*!40000 ALTER TABLE `armorsets` DISABLE KEYS */;
 /*!40000 ALTER TABLE `armorsets` ENABLE KEYS */;
 
--- Dumping structure for table warcry.armorset_categories
+-- Listage de la structure de table warcry. armorset_categories
 CREATE TABLE IF NOT EXISTS `armorset_categories` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.armorset_categories: 0 rows
+-- Listage des données de la table warcry.armorset_categories : 0 rows
 /*!40000 ALTER TABLE `armorset_categories` DISABLE KEYS */;
 /*!40000 ALTER TABLE `armorset_categories` ENABLE KEYS */;
 
--- Dumping structure for table warcry.articles
+-- Listage de la structure de table warcry. articles
 CREATE TABLE IF NOT EXISTS `articles` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(250) NOT NULL,
   `short_text` varchar(350) NOT NULL,
   `text` text NOT NULL,
-  `views` int(10) NOT NULL DEFAULT '0',
+  `views` int NOT NULL DEFAULT '0',
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `author` int(20) NOT NULL DEFAULT '0',
+  `author` int NOT NULL DEFAULT '0',
   `image` varchar(150) NOT NULL,
   `comments` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='Contains the Forums.';
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 COMMENT='Contains the Forums.';
 
--- Dumping data for table warcry.articles: 1 rows
+-- Listage des données de la table warcry.articles : 2 rows
 /*!40000 ALTER TABLE `articles` DISABLE KEYS */;
 INSERT INTO `articles` (`id`, `title`, `short_text`, `text`, `views`, `added`, `author`, `image`, `comments`) VALUES
-	(12, 'Testign we', 'hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw ', 'hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw', 12, '2013-03-03 20:39:51', 2, '21e7c_xp.png', 1);
+	(12, 'Testign we', 'hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw ', 'hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw hahash hasdh ahhahhahah asqt ete te eqq wqw qwqw', 27, '2013-03-04 01:39:51', 5, '21e7c_xp.png', 0),
+	(13, 'Test', 'asdasdasdasd', 'asd', 1, '2026-05-04 09:13:58', 5, '', 0);
 /*!40000 ALTER TABLE `articles` ENABLE KEYS */;
 
--- Dumping structure for table warcry.article_comments
+-- Listage de la structure de table warcry. article_comments
 CREATE TABLE IF NOT EXISTS `article_comments` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `text` text NOT NULL,
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `author` int(20) NOT NULL DEFAULT '0',
-  `article` int(10) NOT NULL DEFAULT '0',
+  `author` int NOT NULL DEFAULT '0',
+  `article` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=135 DEFAULT CHARSET=utf8 COMMENT='Contains the Forums.';
+) ENGINE=MyISAM AUTO_INCREMENT=151 DEFAULT CHARSET=utf8mb3 COMMENT='Contains the Forums.';
 
--- Dumping data for table warcry.article_comments: 0 rows
+-- Listage des données de la table warcry.article_comments : 0 rows
 /*!40000 ALTER TABLE `article_comments` DISABLE KEYS */;
 /*!40000 ALTER TABLE `article_comments` ENABLE KEYS */;
 
--- Dumping structure for table warcry.bugtracker
+-- Listage de la structure de table warcry. bugtracker
 CREATE TABLE IF NOT EXISTS `bugtracker` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` int(11) NOT NULL DEFAULT '0',
-  `title` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `content` text COLLATE latin1_general_ci NOT NULL,
-  `maincategory` tinyint(2) NOT NULL DEFAULT '0',
-  `category` tinyint(2) NOT NULL DEFAULT '0',
-  `subcategory` tinyint(2) NOT NULL DEFAULT '0',
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` int NOT NULL DEFAULT '0',
+  `title` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `content` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `maincategory` tinyint NOT NULL DEFAULT '0',
+  `category` tinyint NOT NULL DEFAULT '0',
+  `subcategory` tinyint NOT NULL DEFAULT '0',
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `priority` tinyint(1) NOT NULL DEFAULT '0',
   `approval` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.bugtracker: 0 rows
+-- Listage des données de la table warcry.bugtracker : 0 rows
 /*!40000 ALTER TABLE `bugtracker` DISABLE KEYS */;
 /*!40000 ALTER TABLE `bugtracker` ENABLE KEYS */;
 
--- Dumping structure for table warcry.changelogs
+-- Listage de la structure de table warcry. changelogs
 CREATE TABLE IF NOT EXISTS `changelogs` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `revision` mediumint(8) unsigned NOT NULL,
-  `changelog` tinyint(2) NOT NULL DEFAULT '0',
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `revision` mediumint unsigned NOT NULL,
+  `changelog` tinyint NOT NULL DEFAULT '0',
   `text` text NOT NULL,
   `author` varchar(150) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item System';
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=FIXED COMMENT='Item System';
 
--- Dumping data for table warcry.changelogs: 0 rows
-/*!40000 ALTER TABLE `changelogs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `changelogs` ENABLE KEYS */;
-
--- Dumping structure for table warcry.coin_activity
+-- Listage de la structure de table warcry. coin_activity
 CREATE TABLE IF NOT EXISTS `coin_activity` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL,
-  `source` varchar(150) COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL,
+  `source` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
   `sourceType` tinyint(1) NOT NULL DEFAULT '0',
   `coinsType` tinyint(1) NOT NULL DEFAULT '1',
   `exchangeType` tinyint(1) NOT NULL DEFAULT '1',
-  `amount` int(10) NOT NULL DEFAULT '0',
+  `amount` int NOT NULL DEFAULT '0',
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.coin_activity: 0 rows
+-- Listage des données de la table warcry.coin_activity : 39 rows
 /*!40000 ALTER TABLE `coin_activity` DISABLE KEYS */;
+INSERT INTO `coin_activity` (`id`, `account`, `source`, `sourceType`, `coinsType`, `exchangeType`, `amount`, `time`) VALUES
+	(1, 4, 'Level Up', 1, 2, 2, 4, '2026-05-04 02:42:33'),
+	(2, 4, 'Level Up', 1, 2, 2, 8, '2026-05-04 02:45:05'),
+	(3, 4, 'In-Game Gold', 1, 2, 2, 5, '2026-05-04 02:48:22'),
+	(4, 4, 'In-Game Gold', 1, 2, 2, 1, '2026-05-04 02:48:36'),
+	(5, 4, 'Faction Change', 0, 2, 2, 5, '2026-05-04 02:57:31'),
+	(6, 4, 'Faction Change', 0, 2, 2, 5, '2026-05-04 02:57:43'),
+	(7, 4, 'Character Recustomization', 0, 2, 2, 5, '2026-05-04 02:58:02'),
+	(8, 4, 'Purchased Boost', 1, 2, 2, 10, '2026-05-04 03:16:37'),
+	(9, 4, 'Purchased Boost', 1, 2, 2, 10, '2026-05-04 03:16:57'),
+	(10, 4, 'Purchased Boost', 1, 2, 2, 10, '2026-05-04 03:17:03'),
+	(11, 4, 'Purchased Boost', 1, 2, 2, 10, '2026-05-04 03:17:06'),
+	(12, 4, 'Purchased Boost', 1, 2, 2, 10, '2026-05-04 03:17:09'),
+	(13, 4, 'Display name change', 1, 2, 2, 10, '2026-05-04 03:25:42'),
+	(14, 4, 'XtremeTop100 Vote', 2, 1, 1, 2, '2026-05-04 03:26:08'),
+	(15, 4, 'TOPG Vote', 2, 1, 1, 2, '2026-05-04 03:47:02'),
+	(16, 4, 'Top100Arena Vote', 2, 1, 1, 2, '2026-05-04 03:47:06'),
+	(17, 4, 'OpenWoW Vote', 2, 1, 1, 2, '2026-05-04 03:47:09'),
+	(18, 4, 'GameSites200 Vote', 2, 1, 1, 2, '2026-05-04 03:47:12'),
+	(19, 4, 'WoWStatus Vote', 2, 1, 1, 2, '2026-05-04 03:47:15'),
+	(20, 4, 'Item Purchase', 0, 2, 2, 1, '2026-05-04 04:23:48'),
+	(21, 4, 'Item Purchase', 0, 2, 2, 1, '2026-05-04 04:44:06'),
+	(22, 4, 'Item Purchase', 0, 2, 2, 2, '2026-05-04 04:50:18'),
+	(23, 4, 'Approved Bug Report', 2, 1, 1, 4, '2026-05-04 08:07:19'),
+	(24, 4, 'Approved Bug Report', 2, 1, 1, 4, '2026-05-04 08:11:20'),
+	(25, 5, 'XtremeTop100 Vote', 2, 1, 1, 2, '2026-05-04 23:36:21'),
+	(26, 5, 'TOPG Vote', 2, 1, 1, 2, '2026-05-04 23:36:26'),
+	(27, 5, 'Top100Arena Vote', 2, 1, 1, 2, '2026-05-04 23:36:29'),
+	(28, 5, 'OpenWoW Vote', 2, 1, 1, 2, '2026-05-04 23:36:31'),
+	(29, 5, 'GameSites200 Vote', 2, 1, 1, 2, '2026-05-04 23:36:32'),
+	(30, 5, 'WoWStatus Vote', 2, 1, 1, 2, '2026-05-04 23:36:34'),
+	(31, 5, 'Level Up', 1, 2, 2, 8, '2026-05-05 23:45:36'),
+	(32, 5, 'Purchased Boost', 1, 2, 2, 10, '2026-05-05 23:48:49'),
+	(33, 5, 'In-Game Gold', 1, 2, 2, 8, '2026-05-05 23:49:35'),
+	(34, 5, 'Top100Arena Vote', 2, 1, 1, 2, '2026-05-05 23:49:59'),
+	(35, 5, 'TOPG Vote', 2, 1, 1, 2, '2026-05-05 23:50:04'),
+	(36, 5, 'XtremeTop100 Vote', 2, 1, 1, 2, '2026-05-05 23:50:06'),
+	(37, 5, 'OpenWoW Vote', 2, 1, 1, 2, '2026-05-05 23:50:08'),
+	(38, 5, 'GameSites200 Vote', 2, 1, 1, 2, '2026-05-05 23:50:09'),
+	(39, 5, 'WoWStatus Vote', 2, 1, 1, 2, '2026-05-05 23:50:15');
 /*!40000 ALTER TABLE `coin_activity` ENABLE KEYS */;
 
--- Dumping structure for table warcry.images
+-- Listage de la structure de table warcry. images
 CREATE TABLE IF NOT EXISTS `images` (
-  `id` bigint(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) COLLATE latin1_general_ci NOT NULL DEFAULT 'Undefined',
-  `descr` text COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'Undefined',
+  `descr` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `account` int(10) NOT NULL DEFAULT '0',
-  `image` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `type` tinyint(3) NOT NULL DEFAULT '0',
-  `status` tinyint(3) NOT NULL DEFAULT '0',
+  `account` int NOT NULL DEFAULT '0',
+  `image` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `type` tinyint NOT NULL DEFAULT '0',
+  `status` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`account`)
 ) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.images: 0 rows
+-- Listage des données de la table warcry.images : 0 rows
 /*!40000 ALTER TABLE `images` DISABLE KEYS */;
 /*!40000 ALTER TABLE `images` ENABLE KEYS */;
 
--- Dumping structure for table warcry.movies
+-- Listage de la structure de table warcry. movies
 CREATE TABLE IF NOT EXISTS `movies` (
-  `id` bigint(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) COLLATE latin1_general_ci NOT NULL DEFAULT 'Undefined',
-  `short_text` varchar(115) COLLATE latin1_general_ci NOT NULL,
-  `descr` text COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'Undefined',
+  `short_text` varchar(115) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `descr` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `account` int(10) NOT NULL DEFAULT '0',
-  `dirname` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `image` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `mp4` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `webm` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `ogg` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `youtube` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `status` tinyint(3) NOT NULL DEFAULT '0',
+  `account` int NOT NULL DEFAULT '0',
+  `dirname` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `image` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `mp4` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `webm` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `ogg` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `youtube` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `status` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`,`account`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.movies: 0 rows
+-- Listage des données de la table warcry.movies : 1 rows
 /*!40000 ALTER TABLE `movies` DISABLE KEYS */;
+INSERT INTO `movies` (`id`, `name`, `short_text`, `descr`, `added`, `account`, `dirname`, `image`, `mp4`, `webm`, `ogg`, `youtube`, `status`) VALUES
+	(7, 'Midnight | Intercession Cinematic | World of Warcraft', 'Intercession Cinematic', 'As Midnight draws near, Xal\'atath’s ravenous void armies descend upon Silvermoon, threatening to envelop all of Azeroth in eternal darkness. \r\n\r\nTake up arms and stand against the Devouring Host in the next chapter of the Worldsoul Saga -- World of Warcraft: Midnight', '2026-05-06 00:34:14', 5, 'Midnight__Intercession_Cinematic__World_of_Warcraft_671de126', 'SiIjThwKLaE', '', '', '', 'https://www.youtube.com/watch?v=SiIjThwKLaE', 1);
 /*!40000 ALTER TABLE `movies` ENABLE KEYS */;
 
--- Dumping structure for table warcry.news
+-- Listage de la structure de table warcry. news
 CREATE TABLE IF NOT EXISTS `news` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `title` varchar(250) COLLATE latin1_general_ci NOT NULL DEFAULT 'Undefined',
-  `image` varchar(150) COLLATE latin1_general_ci NOT NULL DEFAULT 'none',
-  `text` text COLLATE latin1_general_ci NOT NULL,
-  `shortText` varchar(500) COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `title` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'Undefined',
+  `image` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'none',
+  `text` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `shortText` varchar(500) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `author` bigint(20) NOT NULL,
-  `authorStr` varchar(50) COLLATE latin1_general_ci NOT NULL DEFAULT 'Admin',
+  `author` bigint NOT NULL,
+  `authorStr` varchar(50) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'Admin',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.news: 1 rows
+-- Listage des données de la table warcry.news : 1 rows
 /*!40000 ALTER TABLE `news` DISABLE KEYS */;
 INSERT INTO `news` (`id`, `title`, `image`, `text`, `shortText`, `added`, `author`, `authorStr`) VALUES
-	(1, 'Welcome!', 'default.png', 'Thanks for using WarCry-CMS\r\n', 'Welcome to our project.', '2017-09-01 11:28:03', 2, 'Shadow');
+	(1, 'Welcome!', 'default.png', 'Thanks for using WarCry-CMS\r\n', 'Welcome to our project.', '2017-09-01 15:28:03', 2, 'Shadow');
 /*!40000 ALTER TABLE `news` ENABLE KEYS */;
 
--- Dumping structure for table warcry.paymentwall_logs
+-- Listage de la structure de table warcry. paymentwall_logs
 CREATE TABLE IF NOT EXISTS `paymentwall_logs` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL,
-  `TransactionAmount` int(10) NOT NULL,
-  `TransactionType` int(1) NOT NULL DEFAULT '0',
-  `TransactionRefId` varchar(12) COLLATE latin1_general_ci NOT NULL,
-  `TransactionQuery` text COLLATE latin1_general_ci NOT NULL,
-  `text` text COLLATE latin1_general_ci NOT NULL,
-  `type` int(1) NOT NULL DEFAULT '0',
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL,
+  `TransactionAmount` int NOT NULL,
+  `TransactionType` int NOT NULL DEFAULT '0',
+  `TransactionRefId` varchar(12) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `TransactionQuery` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `text` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `type` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.paymentwall_logs: 0 rows
+-- Listage des données de la table warcry.paymentwall_logs : 0 rows
 /*!40000 ALTER TABLE `paymentwall_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `paymentwall_logs` ENABLE KEYS */;
 
--- Dumping structure for table warcry.paypal_logs
+-- Listage de la structure de table warcry. paypal_logs
 CREATE TABLE IF NOT EXISTS `paypal_logs` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `txn_id` varchar(20) COLLATE latin1_general_ci NOT NULL,
-  `txn_type` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `amount` int(10) NOT NULL,
-  `payer_email` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `receiver_email` varchar(150) COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `txn_id` varchar(20) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `txn_type` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `amount` int NOT NULL,
+  `payer_email` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `receiver_email` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `paypal_status` varchar(150) COLLATE latin1_general_ci NOT NULL,
-  `query_string` text COLLATE latin1_general_ci NOT NULL,
-  `text` text COLLATE latin1_general_ci NOT NULL,
-  `type` int(1) NOT NULL DEFAULT '0',
+  `paypal_status` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `query_string` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `text` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `type` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.paypal_logs: 0 rows
+-- Listage des données de la table warcry.paypal_logs : 0 rows
 /*!40000 ALTER TABLE `paypal_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `paypal_logs` ENABLE KEYS */;
 
--- Dumping structure for table warcry.promo_codes
+-- Listage de la structure de table warcry. promo_codes
 CREATE TABLE IF NOT EXISTS `promo_codes` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `token` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `usage` tinyint(2) NOT NULL DEFAULT '0',
-  `reward_type` tinyint(2) NOT NULL DEFAULT '0',
-  `reward_value` int(10) NOT NULL DEFAULT '0',
-  `format` varchar(100) COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `token` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `usage` tinyint NOT NULL DEFAULT '0',
+  `reward_type` tinyint NOT NULL DEFAULT '0',
+  `reward_value` int NOT NULL DEFAULT '0',
+  `format` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.promo_codes: 0 rows
+-- Listage des données de la table warcry.promo_codes : 0 rows
 /*!40000 ALTER TABLE `promo_codes` DISABLE KEYS */;
 /*!40000 ALTER TABLE `promo_codes` ENABLE KEYS */;
 
--- Dumping structure for table warcry.promo_codes_usage
+-- Listage de la structure de table warcry. promo_codes_usage
 CREATE TABLE IF NOT EXISTS `promo_codes_usage` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `token` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `account` bigint(20) NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `token` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `account` bigint NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.promo_codes_usage: 0 rows
+-- Listage des données de la table warcry.promo_codes_usage : 0 rows
 /*!40000 ALTER TABLE `promo_codes_usage` DISABLE KEYS */;
 /*!40000 ALTER TABLE `promo_codes_usage` ENABLE KEYS */;
 
--- Dumping structure for table warcry.purchase_log
+-- Listage de la structure de table warcry. purchase_log
 CREATE TABLE IF NOT EXISTS `purchase_log` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL,
-  `source` varchar(150) COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
-  `text` text COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL,
+  `source` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
+  `text` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('ok','error','pending') COLLATE latin1_general_ci NOT NULL DEFAULT 'pending',
+  `status` enum('ok','error','pending') CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'pending',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=75 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.purchase_log: 0 rows
-/*!40000 ALTER TABLE `purchase_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `purchase_log` ENABLE KEYS */;
 
--- Dumping structure for table warcry.raf_hash
+-- Listage de la structure de table warcry. raf_hash
 CREATE TABLE IF NOT EXISTS `raf_hash` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL,
-  `hash` varchar(150) COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL,
+  `hash` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQUE` (`account`,`hash`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.raf_hash: 0 rows
-/*!40000 ALTER TABLE `raf_hash` DISABLE KEYS */;
-/*!40000 ALTER TABLE `raf_hash` ENABLE KEYS */;
-
--- Dumping structure for table warcry.raf_links
+-- Listage de la structure de table warcry. raf_links
 CREATE TABLE IF NOT EXISTS `raf_links` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL,
-  `recruiter` bigint(20) NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL,
+  `recruiter` bigint NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `cDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Link completion date.',
   `status` tinyint(1) NOT NULL DEFAULT '0',
-  `statusText` varchar(250) COLLATE latin1_general_ci NOT NULL,
+  `statusText` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.raf_links: 0 rows
+-- Listage des données de la table warcry.raf_links : 0 rows
 /*!40000 ALTER TABLE `raf_links` DISABLE KEYS */;
 /*!40000 ALTER TABLE `raf_links` ENABLE KEYS */;
 
--- Dumping structure for table warcry.realm_stats
+-- Listage de la structure de table warcry. realm_stats
 CREATE TABLE IF NOT EXISTS `realm_stats` (
-  `RealmID` tinyint(2) NOT NULL,
+  `RealmID` tinyint NOT NULL,
   `updatetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `horde` int(10) NOT NULL DEFAULT '0',
-  `alliance` int(10) NOT NULL DEFAULT '0',
-  `bloodelfs` int(10) NOT NULL DEFAULT '0',
-  `draeneis` int(10) NOT NULL DEFAULT '0',
-  `dwarfs` int(10) NOT NULL DEFAULT '0',
-  `gnomes` int(10) NOT NULL DEFAULT '0',
-  `goblins` int(10) NOT NULL DEFAULT '0',
-  `humans` int(10) NOT NULL DEFAULT '0',
-  `nightelfs` int(10) NOT NULL DEFAULT '0',
-  `orcs` int(10) NOT NULL DEFAULT '0',
-  `taurens` int(10) NOT NULL DEFAULT '0',
-  `trolls` int(10) NOT NULL DEFAULT '0',
-  `undeads` int(10) NOT NULL DEFAULT '0',
-  `worgens` int(10) NOT NULL DEFAULT '0',
-  `deathknights` int(10) NOT NULL DEFAULT '0',
-  `druids` int(10) NOT NULL DEFAULT '0',
-  `hunters` int(10) NOT NULL DEFAULT '0',
-  `mages` int(10) NOT NULL DEFAULT '0',
-  `paladins` int(10) NOT NULL DEFAULT '0',
-  `priests` int(10) NOT NULL DEFAULT '0',
-  `rogues` int(10) NOT NULL DEFAULT '0',
-  `shamans` int(10) NOT NULL DEFAULT '0',
-  `warlocks` int(10) NOT NULL DEFAULT '0',
-  `warriors` int(10) NOT NULL DEFAULT '0',
+  `horde` int NOT NULL DEFAULT '0',
+  `alliance` int NOT NULL DEFAULT '0',
+  `bloodelfs` int NOT NULL DEFAULT '0',
+  `draeneis` int NOT NULL DEFAULT '0',
+  `dwarfs` int NOT NULL DEFAULT '0',
+  `gnomes` int NOT NULL DEFAULT '0',
+  `goblins` int NOT NULL DEFAULT '0',
+  `humans` int NOT NULL DEFAULT '0',
+  `nightelfs` int NOT NULL DEFAULT '0',
+  `orcs` int NOT NULL DEFAULT '0',
+  `taurens` int NOT NULL DEFAULT '0',
+  `trolls` int NOT NULL DEFAULT '0',
+  `undeads` int NOT NULL DEFAULT '0',
+  `worgens` int NOT NULL DEFAULT '0',
+  `deathknights` int NOT NULL DEFAULT '0',
+  `druids` int NOT NULL DEFAULT '0',
+  `hunters` int NOT NULL DEFAULT '0',
+  `mages` int NOT NULL DEFAULT '0',
+  `paladins` int NOT NULL DEFAULT '0',
+  `priests` int NOT NULL DEFAULT '0',
+  `rogues` int NOT NULL DEFAULT '0',
+  `shamans` int NOT NULL DEFAULT '0',
+  `warlocks` int NOT NULL DEFAULT '0',
+  `warriors` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`RealmID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.realm_stats: 0 rows
+-- Listage des données de la table warcry.realm_stats : 1 rows
 /*!40000 ALTER TABLE `realm_stats` DISABLE KEYS */;
+INSERT INTO `realm_stats` (`RealmID`, `updatetime`, `horde`, `alliance`, `bloodelfs`, `draeneis`, `dwarfs`, `gnomes`, `goblins`, `humans`, `nightelfs`, `orcs`, `taurens`, `trolls`, `undeads`, `worgens`, `deathknights`, `druids`, `hunters`, `mages`, `paladins`, `priests`, `rogues`, `shamans`, `warlocks`, `warriors`) VALUES
+	(1, '2026-05-03 20:41:49', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 /*!40000 ALTER TABLE `realm_stats` ENABLE KEYS */;
 
--- Dumping structure for table warcry.recovery
+-- Listage de la structure de table warcry. recovery
 CREATE TABLE IF NOT EXISTS `recovery` (
-  `account` bigint(20) NOT NULL,
-  `key` varchar(200) CHARACTER SET utf8 NOT NULL,
+  `account` bigint NOT NULL,
+  `key` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `UNIQUE` (`account`,`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.recovery: 0 rows
+-- Listage des données de la table warcry.recovery : 0 rows
 /*!40000 ALTER TABLE `recovery` DISABLE KEYS */;
 /*!40000 ALTER TABLE `recovery` ENABLE KEYS */;
 
--- Dumping structure for table warcry.refundable_items
+-- Listage de la structure de table warcry. refundable_items
 CREATE TABLE IF NOT EXISTS `refundable_items` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `entry` int(10) NOT NULL DEFAULT '0',
-  `price` int(10) NOT NULL DEFAULT '0',
-  `currency` tinyint(2) NOT NULL DEFAULT '0',
-  `character` int(10) NOT NULL DEFAULT '0',
-  `account` bigint(10) NOT NULL DEFAULT '0',
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `entry` int NOT NULL DEFAULT '0',
+  `price` int NOT NULL DEFAULT '0',
+  `currency` tinyint NOT NULL DEFAULT '0',
+  `character` int NOT NULL DEFAULT '0',
+  `account` bigint NOT NULL DEFAULT '0',
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` tinyint(2) NOT NULL DEFAULT '0',
+  `status` tinyint NOT NULL DEFAULT '0',
   `timeRefunded` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `error` text CHARACTER SET utf8 NOT NULL,
+  `error` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.refundable_items: 0 rows
-/*!40000 ALTER TABLE `refundable_items` DISABLE KEYS */;
-/*!40000 ALTER TABLE `refundable_items` ENABLE KEYS */;
-
--- Dumping structure for table warcry.reserved_emails
+-- Listage de la structure de table warcry. reserved_emails
 CREATE TABLE IF NOT EXISTS `reserved_emails` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `email` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `application` varchar(100) COLLATE latin1_general_ci NOT NULL,
-  `key` varchar(200) COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `email` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `application` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `key` varchar(200) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `expire` varchar(100) COLLATE latin1_general_ci NOT NULL,
+  `expire` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQUE` (`email`,`application`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.reserved_emails: 0 rows
+-- Listage des données de la table warcry.reserved_emails : 0 rows
 /*!40000 ALTER TABLE `reserved_emails` DISABLE KEYS */;
 /*!40000 ALTER TABLE `reserved_emails` ENABLE KEYS */;
 
--- Dumping structure for table warcry.store_activity
+-- Listage de la structure de table warcry. site_settings
+CREATE TABLE IF NOT EXISTS `site_settings` (
+  `name` varchar(64) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+
+-- Listage des données de la table warcry.site_settings : 28 rows
+/*!40000 ALTER TABLE `site_settings` DISABLE KEYS */;
+INSERT INTO `site_settings` (`name`, `value`) VALUES
+	('site_name', 'Warcry'),
+	('copyright', 'Copyright &copy; <b>WarcryCMS</b>&trade; 2026. All Rights Reserved.'),
+	('favicon', 'template/style/images/favicon.ico'),
+	('home_welcome_title', 'Welcome to WarcryCMS V2'),
+	('home_welcome_text', 'We are a growing server with 2 realms 1 blizzlike and 1 fun realm instant 255 with much custom content.\r\nIf you are looking forward to join our team or have any questions, please join our Discord channel or create a topic on the forum!'),
+	('account_module_levels_enabled', '1'),
+	('account_module_levels_title', 'Character Level Up'),
+	('account_module_levels_description', 'Select one of the available level packages and receive the level, reward gold and bags on your character.'),
+	('account_module_levels_1_level', '60'),
+	('account_module_levels_1_reward_gold', '2000'),
+	('account_module_levels_1_bags', '4'),
+	('account_module_levels_1_bag_item', '14155'),
+	('account_module_levels_1_bag_slots', '16'),
+	('account_module_levels_1_price', '4'),
+	('account_module_levels_2_level', '70'),
+	('account_module_levels_2_reward_gold', '3000'),
+	('account_module_levels_2_bags', '4'),
+	('account_module_levels_2_bag_item', '14156'),
+	('account_module_levels_2_bag_slots', '18'),
+	('account_module_levels_2_price', '6'),
+	('account_module_levels_3_level', '80'),
+	('account_module_levels_3_reward_gold', '5000'),
+	('account_module_levels_3_bags', '4'),
+	('account_module_levels_3_bag_item', '21876'),
+	('account_module_levels_3_bag_slots', '20'),
+	('account_module_levels_3_price', '8'),
+	('realmlist', 'logon.warcry.com'),
+	('footer_copyright', 'Copyright &copy; <b>WarcryCMS</b>&trade; 2026. All Rights Reserved.');
+/*!40000 ALTER TABLE `site_settings` ENABLE KEYS */;
+
+-- Listage de la structure de table warcry. store_activity
 CREATE TABLE IF NOT EXISTS `store_activity` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL,
-  `source` varchar(150) COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
-  `text` text COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL,
+  `source` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT 'NONE',
+  `text` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `itemId` int(11) NOT NULL,
-  `money` varchar(150) COLLATE latin1_general_ci NOT NULL,
+  `itemId` int NOT NULL,
+  `money` varchar(150) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.store_activity: 0 rows
-/*!40000 ALTER TABLE `store_activity` DISABLE KEYS */;
-/*!40000 ALTER TABLE `store_activity` ENABLE KEYS */;
 
--- Dumping structure for table warcry.store_items
+-- Listage de la structure de table warcry. store_items
 CREATE TABLE IF NOT EXISTS `store_items` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `realm` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '0',
-  `gold` int(10) NOT NULL DEFAULT '10',
-  `silver` int(10) NOT NULL DEFAULT '30',
-  `class` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `subclass` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `entry` mediumint unsigned NOT NULL DEFAULT '0',
+  `realm` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL DEFAULT '0',
+  `gold` int NOT NULL DEFAULT '10',
+  `silver` int NOT NULL DEFAULT '30',
+  `class` tinyint unsigned NOT NULL DEFAULT '0',
+  `subclass` tinyint unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL DEFAULT '',
-  `displayid` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `Quality` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `Flags` bigint(20) NOT NULL DEFAULT '0',
-  `InventoryType` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `AllowableClass` int(11) NOT NULL DEFAULT '-1',
-  `ItemLevel` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `displayid` mediumint unsigned NOT NULL DEFAULT '0',
+  `icon` varchar(100) NOT NULL DEFAULT '',
+  `Quality` tinyint unsigned NOT NULL DEFAULT '0',
+  `Flags` bigint NOT NULL DEFAULT '0',
+  `InventoryType` tinyint unsigned NOT NULL DEFAULT '0',
+  `AllowableClass` int NOT NULL DEFAULT '-1',
+  `ItemLevel` smallint unsigned NOT NULL DEFAULT '0',
   `description` varchar(255) NOT NULL DEFAULT '',
-  `hits` int(10) NOT NULL DEFAULT '0',
+  `hits` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `items_index` (`class`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item System';
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=FIXED COMMENT='Item System';
 
--- Dumping data for table warcry.store_items: 0 rows
+-- Listage des données de la table warcry.store_items : 2 rows
 /*!40000 ALTER TABLE `store_items` DISABLE KEYS */;
+INSERT INTO `store_items` (`id`, `entry`, `realm`, `gold`, `silver`, `class`, `subclass`, `name`, `displayid`, `icon`, `Quality`, `Flags`, `InventoryType`, `AllowableClass`, `ItemLevel`, `description`, `hits`) VALUES
+	(7, 32837, '1', 1, 1, 2, 7, 'Warglaive of Azzinoth', 45479, 'inv_weapon_glave_01', 5, 0, 21, 9, 156, '', 0),
+	(9, 32838, '1', 2, 2, 2, 7, 'Warglaive of Azzinoth', 45481, 'inv_weapon_glave_01', 5, 0, 22, 9, 156, '', 0);
 /*!40000 ALTER TABLE `store_items` ENABLE KEYS */;
 
--- Dumping structure for table warcry.text_captcha
+-- Listage de la structure de table warcry. text_captcha
 CREATE TABLE IF NOT EXISTS `text_captcha` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `questionHash` varchar(32) COLLATE latin1_general_ci NOT NULL,
-  `question` varchar(250) COLLATE latin1_general_ci NOT NULL,
-  `answers` text COLLATE latin1_general_ci NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `questionHash` varchar(32) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `question` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `answers` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQUE` (`questionHash`)
 ) ENGINE=MyISAM AUTO_INCREMENT=133 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.text_captcha: 132 rows
+-- Listage des données de la table warcry.text_captcha : 132 rows
 /*!40000 ALTER TABLE `text_captcha` DISABLE KEYS */;
 INSERT INTO `text_captcha` (`id`, `questionHash`, `question`, `answers`) VALUES
 	(1, 'ceb76b9adcd6c3871c35f12ffafb7851', 'Which digit is 6th in the number 5293305?', 'cfcd208495d565ef66e7dff9f98764da\nd02c4c4cde7ae76252540d116a40f23a\n'),
@@ -633,59 +699,81 @@ INSERT INTO `text_captcha` (`id`, `questionHash`, `question`, `answers`) VALUES
 	(132, '9834d3c9f70833903da0743e0f184661', 'How many colours in the list cow, yellow and brown?', 'c81e728d9d4c2f636f067f89cc14862c\nb8a9f715dbb64fd5c56e7783c6820a61\n');
 /*!40000 ALTER TABLE `text_captcha` ENABLE KEYS */;
 
--- Dumping structure for table warcry.tokens
+-- Listage de la structure de table warcry. tokens
 CREATE TABLE IF NOT EXISTS `tokens` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL,
-  `application` varchar(100) COLLATE latin1_general_ci NOT NULL,
-  `key` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL,
+  `application` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `key` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `expire` varchar(100) COLLATE latin1_general_ci NOT NULL,
-  `externalData` text COLLATE latin1_general_ci NOT NULL,
+  `expire` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `externalData` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQUE` (`key`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.tokens: 0 rows
+-- Listage des données de la table warcry.tokens : 0 rows
 /*!40000 ALTER TABLE `tokens` DISABLE KEYS */;
 /*!40000 ALTER TABLE `tokens` ENABLE KEYS */;
 
--- Dumping structure for table warcry.votecounter
+-- Listage de la structure de table warcry. votecounter
 CREATE TABLE IF NOT EXISTS `votecounter` (
-  `account` bigint(20) DEFAULT NULL,
-  `year` mediumint(4) DEFAULT NULL,
-  `month` tinyint(2) DEFAULT NULL,
-  `counter` int(5) DEFAULT '0',
+  `account` bigint DEFAULT NULL,
+  `year` mediumint DEFAULT NULL,
+  `month` tinyint DEFAULT NULL,
+  `counter` int DEFAULT '0',
   UNIQUE KEY `UNIQUE` (`account`,`month`,`year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping data for table warcry.votecounter: ~0 rows (approximately)
-/*!40000 ALTER TABLE `votecounter` DISABLE KEYS */;
-/*!40000 ALTER TABLE `votecounter` ENABLE KEYS */;
+-- Listage des données de la table warcry.votecounter : ~1 rows (environ)
+INSERT INTO `votecounter` (`account`, `year`, `month`, `counter`) VALUES
+	(5, 2026, 5, 12);
 
--- Dumping structure for table warcry.vote_data
+-- Listage de la structure de table warcry. vote_data
 CREATE TABLE IF NOT EXISTS `vote_data` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` bigint(20) NOT NULL DEFAULT '0',
-  `siteid` tinyint(2) NOT NULL DEFAULT '0',
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `account` bigint NOT NULL DEFAULT '0',
+  `siteid` tinyint NOT NULL DEFAULT '0',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table warcry.vote_data: 0 rows
-/*!40000 ALTER TABLE `vote_data` DISABLE KEYS */;
-/*!40000 ALTER TABLE `vote_data` ENABLE KEYS */;
-
--- Dumping structure for table warcry.wcf_categories
-CREATE TABLE IF NOT EXISTS `wcf_categories` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(250) NOT NULL,
-  `position` tinyint(2) NOT NULL DEFAULT '0',
-  `flags` bigint(20) NOT NULL DEFAULT '0',
+-- Listage de la structure de table warcry. vote_sites
+CREATE TABLE IF NOT EXISTS `vote_sites` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(120) NOT NULL,
+  `url` text NOT NULL,
+  `img` text NOT NULL,
+  `reward_silver` int NOT NULL DEFAULT '2',
+  `cooldown` varchar(32) NOT NULL DEFAULT '',
+  `position` int NOT NULL DEFAULT '0',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='Contains the Main Forum categories.';
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table warcry.wcf_categories: 4 rows
+-- Listage des données de la table warcry.vote_sites : 6 rows
+/*!40000 ALTER TABLE `vote_sites` DISABLE KEYS */;
+INSERT INTO `vote_sites` (`id`, `name`, `url`, `img`, `reward_silver`, `cooldown`, `position`, `active`, `created_at`, `updated_at`) VALUES
+	(1, 'XtremeTop100', 'http://www.xtremetop100.com/in.php?site=1132331157', 'http://www.xtremeTop100.com/votenew.jpg', 2, '', 1, 1, '2026-05-04 17:42:26', NULL),
+	(2, 'TOPG', 'http://topg.org/World-Of-Warcraft/in-354373', 'http://topg.org/topg.gif', 2, '', 2, 1, '2026-05-04 17:42:26', NULL),
+	(3, 'Top100Arena', 'http://www.top100arena.com/in.asp?id=78675', 'https://www.top100arena.com/images/logo3-transparent.png', 2, '', 3, 1, '2026-05-04 17:42:26', '2026-05-04 17:43:24'),
+	(4, 'OpenWoW', 'http://www.openwow.com/?vote=2302', 'http://cdn.openwow.com/toplist/vote_small.jpg', 2, '', 4, 1, '2026-05-04 17:42:26', NULL),
+	(5, 'GameSites200', 'http://www.gamesites200.com/wowprivate/in.php?id=10780', 'http://www.gamesites200.com/wowprivate/vote.gif', 2, '', 5, 1, '2026-05-04 17:42:26', NULL),
+	(6, 'WoWStatus', 'http://www.wowstatus.net/in.php?server=776723', 'http://www.wowstatus.net/includes/images/vote.gif', 2, '', 6, 1, '2026-05-04 17:42:26', NULL);
+/*!40000 ALTER TABLE `vote_sites` ENABLE KEYS */;
+
+-- Listage de la structure de table warcry. wcf_categories
+CREATE TABLE IF NOT EXISTS `wcf_categories` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  `position` tinyint NOT NULL DEFAULT '0',
+  `flags` bigint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COMMENT='Contains the Main Forum categories.';
+
+-- Listage des données de la table warcry.wcf_categories : 4 rows
 /*!40000 ALTER TABLE `wcf_categories` DISABLE KEYS */;
 INSERT INTO `wcf_categories` (`id`, `name`, `position`, `flags`) VALUES
 	(1, 'Server Information', 0, 0),
@@ -694,27 +782,27 @@ INSERT INTO `wcf_categories` (`id`, `name`, `position`, `flags`) VALUES
 	(4, 'Gundrak (Blizzlike Realm)', 0, 0);
 /*!40000 ALTER TABLE `wcf_categories` ENABLE KEYS */;
 
--- Dumping structure for table warcry.wcf_forums
+-- Listage de la structure de table warcry. wcf_forums
 CREATE TABLE IF NOT EXISTS `wcf_forums` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `category` int(10) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `category` int NOT NULL DEFAULT '0',
   `name` varchar(250) NOT NULL,
   `description` varchar(500) NOT NULL,
-  `class` tinyint(2) NOT NULL DEFAULT '0',
-  `topics` int(10) NOT NULL DEFAULT '0',
-  `posts` int(10) NOT NULL DEFAULT '0',
-  `position` tinyint(2) NOT NULL DEFAULT '0',
-  `lasttopic_id` int(10) NOT NULL DEFAULT '0',
-  `flags` bigint(20) NOT NULL DEFAULT '0',
+  `class` tinyint NOT NULL DEFAULT '0',
+  `topics` int NOT NULL DEFAULT '0',
+  `posts` int NOT NULL DEFAULT '0',
+  `position` tinyint NOT NULL DEFAULT '0',
+  `lasttopic_id` int NOT NULL DEFAULT '0',
+  `flags` bigint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='Contains the Forums.';
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COMMENT='Contains the Forums.';
 
--- Dumping data for table warcry.wcf_forums: 9 rows
+-- Listage des données de la table warcry.wcf_forums : 9 rows
 /*!40000 ALTER TABLE `wcf_forums` DISABLE KEYS */;
 INSERT INTO `wcf_forums` (`id`, `category`, `name`, `description`, `class`, `topics`, `posts`, `position`, `lasttopic_id`, `flags`) VALUES
-	(1, 1, 'Latest News', 'Latest news for the community.', 0, 0, 0, 0, 0, 0),
+	(1, 1, 'Latest News', 'Latest news for the community.', 0, 3, 1, 0, 3, 0),
 	(3, 2, 'Introduce Yourself', 'New to our project? Why don\'t you introduce yourself! :)\r\n', 0, 0, 0, 0, 0, 0),
-	(2, 1, 'Frequently Asked Questions (FAQ)', '', 0, 0, 0, 0, 0, 0),
+	(2, 1, 'Frequently Asked Questions (FAQ)', '', 0, 1, 1, 0, 4, 0),
 	(4, 2, 'General Discussion', 'Discussion about World of Warcraft, Project-Reborn related.\r\n', 0, 0, 0, 0, 0, 0),
 	(5, 2, 'Support', 'A place for players to help players with a variety of issues with little to no intervention from Staff.', 0, 0, 0, 0, 0, 0),
 	(6, 3, 'Suggestions', 'Got any suggestions? Don\'t hesistate to create a thread.\r\n', 0, 0, 0, 0, 0, 0),
@@ -723,45 +811,47 @@ INSERT INTO `wcf_forums` (`id`, `category`, `name`, `description`, `class`, `top
 	(9, 4, 'Recruitment', '', 0, 0, 0, 0, 0, 0);
 /*!40000 ALTER TABLE `wcf_forums` ENABLE KEYS */;
 
--- Dumping structure for table warcry.wcf_posts
+-- Listage de la structure de table warcry. wcf_posts
 CREATE TABLE IF NOT EXISTS `wcf_posts` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `topic` int(10) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `topic` int NOT NULL DEFAULT '0',
   `title` varchar(250) NOT NULL,
   `text` text NOT NULL,
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `author` bigint(20) NOT NULL DEFAULT '0',
-  `lastedit_by` int(20) NOT NULL DEFAULT '0',
+  `author` bigint NOT NULL DEFAULT '0',
+  `lastedit_by` int NOT NULL DEFAULT '0',
   `lastedit_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `deleted_by` int(20) NOT NULL DEFAULT '0',
+  `deleted_by` int NOT NULL DEFAULT '0',
   `deleted_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `flags` bigint(20) NOT NULL DEFAULT '0',
+  `flags` bigint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Contains the Forums.';
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COMMENT='Contains the Forums.';
 
--- Dumping data for table warcry.wcf_posts: 0 rows
+-- Listage des données de la table warcry.wcf_posts : 0 rows
 /*!40000 ALTER TABLE `wcf_posts` DISABLE KEYS */;
 /*!40000 ALTER TABLE `wcf_posts` ENABLE KEYS */;
 
--- Dumping structure for table warcry.wcf_topics
+-- Listage de la structure de table warcry. wcf_topics
 CREATE TABLE IF NOT EXISTS `wcf_topics` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `forum` int(10) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `forum` int NOT NULL DEFAULT '0',
   `name` varchar(250) NOT NULL,
   `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `author` bigint(20) NOT NULL DEFAULT '0',
-  `views` bigint(20) NOT NULL DEFAULT '0',
-  `posts` int(10) NOT NULL DEFAULT '0',
-  `lastpost_id` int(10) NOT NULL DEFAULT '0',
+  `author` bigint NOT NULL DEFAULT '0',
+  `views` bigint NOT NULL DEFAULT '0',
+  `posts` int NOT NULL DEFAULT '0',
+  `lastpost_id` int NOT NULL DEFAULT '0',
   `lastpost_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `flags` bigint(20) NOT NULL DEFAULT '0',
+  `flags` bigint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Contains the Forums.';
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COMMENT='Contains the Forums.';
 
--- Dumping data for table warcry.wcf_topics: 0 rows
+-- Listage des données de la table warcry.wcf_topics : 0 rows
 /*!40000 ALTER TABLE `wcf_topics` DISABLE KEYS */;
 /*!40000 ALTER TABLE `wcf_topics` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
