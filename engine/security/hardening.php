@@ -20,7 +20,7 @@ if (!function_exists('warcry_security_headers')) {
         header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
         header('X-XSS-Protection: 0');
         // Soft CSP: blocks object/embed injection while keeping inline legacy JS/CSS working.
-        header("Content-Security-Policy: default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self' https:;");
+        header("Content-Security-Policy: default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http://www.google-analytics.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: http://wow.zamimg.com http://*.zamimg.com https://wow.zamimg.com https://*.zamimg.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self' https:;");
     }
 }
 

@@ -18,3 +18,6 @@ Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>
+
+# Custom Warcry 404 page
+ErrorDocument 404 /warcry/404.php

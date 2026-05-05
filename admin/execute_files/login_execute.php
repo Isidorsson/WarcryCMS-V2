@@ -12,7 +12,30 @@ if ($CURUSER->isOnline())
     exit();
 }
 
+
 $ERRORS->NewInstance('login');
+
+if (function_exists('warcry_csrf_verify') && !warcry_csrf_verify()) {
+    $ERRORS->Add('Security token expired. Please try again.');
+    $ERRORS->Check('/login.php');
+    exit;
+}
+
+if (isset($_POST['panel_gate'])) {
+    $code = isset($_POST['admin_panel_code']) ? (string)$_POST['admin_panel_code'] : '';
+    if (function_exists('warcry_admin_panel_unlock') && warcry_admin_panel_unlock($code)) {
+        header('Location: login.php');
+        exit;
+    }
+    $ERRORS->Add('Invalid admin panel security code.');
+    $ERRORS->Check('/login.php');
+    exit;
+}
+
+if (function_exists('warcry_admin_require_panel_code')) {
+    warcry_admin_require_panel_code();
+}
+
 
 $username = (isset($_POST['username']) ? trim($_POST['username']) : false);
 $password = (isset($_POST['password']) ? $_POST['password'] : false);
