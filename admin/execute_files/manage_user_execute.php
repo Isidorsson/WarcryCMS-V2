@@ -9,7 +9,7 @@ if ($uid <= 0) { $ERRORS->Add('Invalid user id.', 'manage_user'); $ERRORS->Check
 if (!isset($realms_config[$realm])) { $realm = 1; }
 
 function wc_redirect_user($uid,$realm){ header('Location: index.php?page=users&view=manage&uid='.(int)$uid.'&realm='.(int)$realm); exit; }
-function wc_col_exists($pdo,$table,$col){ try { $q=$pdo->prepare("SHOW COLUMNS FROM `".$table."` LIKE :c"); $q->execute(array(':c'=>$col)); return $q->rowCount()>0; } catch(Exception $e){ return false; } }
+function wc_col_exists($pdo,$table,$col){ try { if(!preg_match('/^[A-Za-z0-9_]+$/',$table) || !preg_match('/^[A-Za-z0-9_]+$/',$col)) return false; $sql="SHOW COLUMNS FROM `".$table."` LIKE ".$pdo->quote($col); $q=$pdo->query($sql); return ($q && $q->rowCount()>0); } catch(Exception $e){ return false; } }
 
 try {
     if ($action === 'save_profile') {

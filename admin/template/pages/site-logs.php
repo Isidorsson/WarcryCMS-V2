@@ -1,7 +1,7 @@
 <?php
 if (!defined('init_pages')) { header('HTTP/1.0 404 not found'); exit; }
 function hal($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
-function warcry_table_exists($table) { global $DB; try { $s=$DB->prepare("SHOW TABLES LIKE :t"); $s->execute(array(':t'=>$table)); return $s->rowCount() > 0; } catch(Exception $e) { return false; } }
+function warcry_table_exists($table) { global $DB; try { if(!preg_match('/^[a-zA-Z0-9_]+$/',$table)) return false; $s=$DB->query("SHOW TABLES LIKE ".$DB->quote($table)); return ($s && $s->rowCount() > 0); } catch(Exception $e) { return false; } }
 function warcry_log_user($id) { global $DB; $id=(int)$id; if ($id <= 0) return '-'; try { $s=$DB->prepare("SELECT `displayName` FROM `account_data` WHERE `id`=:id LIMIT 1"); $s->execute(array(':id'=>$id)); $r=$s->fetch(); return $r ? '<a href="index.php?page=user-preview&uid='.$id.'">'.hal($r['displayName']).'</a> ['.$id.']' : $id; } catch(Exception $e) { return $id; } }
 if (!$CURUSER->getPermissions()->isAllowed(PERMISSION_LOGS)) { $CORE->ErrorBox('You do not have the required permissions.'); }
 $filter = isset($_GET['type']) ? preg_replace('/[^a-z0-9_\-]/i','',$_GET['type']) : 'all';

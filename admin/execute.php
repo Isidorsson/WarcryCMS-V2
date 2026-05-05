@@ -44,6 +44,7 @@ $allowed = array(
 	'forum_manage',
 	'realms',
 	'account_modules',
+	'ticket_manage',
 );
 
 if (in_array($execute, $allowed))

@@ -7,7 +7,7 @@ function wa_money($copper){ $copper=(int)$copper; $g=floor($copper/10000); $s=fl
 function wa_status_class($v){ return $v === 'active' ? 'green' : ($v === 'pending' ? 'gold' : 'red'); }
 function wa_class_name($id){ $m=array(1=>'Warrior',2=>'Paladin',3=>'Hunter',4=>'Rogue',5=>'Priest',6=>'Death Knight',7=>'Shaman',8=>'Mage',9=>'Warlock',11=>'Druid'); return isset($m[(int)$id])?$m[(int)$id]:'Class '.(int)$id; }
 function wa_race_name($id){ $m=array(1=>'Human',2=>'Orc',3=>'Dwarf',4=>'Night Elf',5=>'Undead',6=>'Tauren',7=>'Gnome',8=>'Troll',10=>'Blood Elf',11=>'Draenei'); return isset($m[(int)$id])?$m[(int)$id]:'Race '.(int)$id; }
-function wa_col_exists($pdo,$table,$col){ try { $q=$pdo->prepare("SHOW COLUMNS FROM `".$table."` LIKE :c"); $q->execute(array(':c'=>$col)); return $q->rowCount()>0; } catch(Exception $e){ return false; } }
+function wa_col_exists($pdo,$table,$col){ try { if(!preg_match('/^[A-Za-z0-9_]+$/',$table) || !preg_match('/^[A-Za-z0-9_]+$/',$col)) return false; $sql="SHOW COLUMNS FROM `".$table."` LIKE ".$pdo->quote($col); $q=$pdo->query($sql); return ($q && $q->rowCount()>0); } catch(Exception $e){ return false; } }
 
 $view = isset($_GET['view']) ? $_GET['view'] : 'list';
 $account = isset($_GET['uid']) ? (int)$_GET['uid'] : 0;
