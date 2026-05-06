@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 define('init_engine', true);
 
 require_once __DIR__ . '/security/hardening.php';
+require_once __DIR__ . '/../../engine/security/datatables.php';
 
 ###################################################################################
 ## FILE INCLUSION #################################################################

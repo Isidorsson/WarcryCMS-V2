@@ -50,15 +50,6 @@ if (!function_exists('warcry_db_like_escape')) {
     }
 }
 
-// Compatibility for old DataTables files that still call mysql_real_escape_string().
-// This prevents fatal errors on PHP 7/8 and escapes LIKE/search input safely.
-if (!function_exists('mysql_real_escape_string')) {
-    function mysql_real_escape_string($value)
-    {
-        return warcry_db_like_escape($value);
-    }
-}
-
 if (!function_exists('warcry_csrf_token')) {
     function warcry_csrf_token(): string
     {
@@ -87,6 +78,36 @@ if (!function_exists('warcry_csrf_verify')) {
         }
         $posted = $_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
         return isset($_SESSION['WARCRY_CSRF_TOKEN']) && hash_equals($_SESSION['WARCRY_CSRF_TOKEN'], (string)$posted);
+    }
+}
+
+// Flip to true after every admin form/AJAX POST emits warcry_csrf_token().
+// Until then, mismatches are logged to error_log so missing tokens surface
+// without breaking admin workflows.
+if (!defined('WARCRY_CSRF_ENFORCE')) {
+    define('WARCRY_CSRF_ENFORCE', false);
+}
+
+if (!function_exists('warcry_csrf_guard')) {
+    function warcry_csrf_guard(string $context, callable $onBlock): void
+    {
+        if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            return;
+        }
+        if (warcry_csrf_verify()) {
+            return;
+        }
+        error_log(sprintf(
+            '[warcry-csrf] missing/invalid token (%s) uri=%s ip=%s ua=%s',
+            $context,
+            $_SERVER['REQUEST_URI'] ?? '',
+            $_SERVER['REMOTE_ADDR'] ?? '',
+            substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 120)
+        ));
+        if (WARCRY_CSRF_ENFORCE) {
+            $onBlock();
+            exit;
+        }
     }
 }
 
