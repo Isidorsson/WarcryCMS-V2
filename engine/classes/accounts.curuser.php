@@ -358,6 +358,53 @@ class CURUSER extends CORE
 		session_destroy();
 	}
 
+
+	/**
+	 * Safely parse legacy account_data array strings.
+	 * Old records are stored like: array('key' => 'value', );
+	 */
+	private function parseStoredArray($string)
+	{
+		$string = trim((string)$string);
+		if ($string == '')
+		{
+			return array();
+		}
+
+		$json = json_decode($string, true);
+		if (is_array($json))
+		{
+			return $json;
+		}
+
+		$data = array();
+		if (preg_match_all('/[\'\"]((?:\\\\.|(?![\'\"]).)*)[\'\"]\s*=>\s*[\'\"]((?:\\\\.|(?![\'\"]).)*)[\'\"]/s', $string, $matches, PREG_SET_ORDER))
+		{
+			foreach ($matches as $match)
+			{
+				$key = stripcslashes($match[1]);
+				$value = stripcslashes($match[2]);
+				$data[$key] = $value;
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Store arrays using valid PHP array syntax, escaped safely with var_export().
+	 * This keeps compatibility with existing database content.
+	 */
+	private function exportStoredArray($data)
+	{
+		if (!is_array($data))
+		{
+			$data = array();
+		}
+
+		return var_export($data, true) . ';';
+	}
+
 	public function getCooldown($key)
 	{
 		//check if the current user is online
@@ -369,15 +416,8 @@ class CURUSER extends CORE
 		//get the cooldowns string from the users record
 		$string = $this->get('cooldowns');
 
-		//eval the string as PHP code, parsing to array in this case
-		if (!$string or $string == '')
-		{
-			$cooldowns = array();
-		}
-		else
-		{
-			$cooldowns = eval("return $string");
-		}
+		//Safely parse the stored array string without executing PHP code.
+		$cooldowns = $this->parseStoredArray($string);
 		
 		if (isset($cooldowns[$key]))
 		{
@@ -423,15 +463,8 @@ class CURUSER extends CORE
 		$string = $row['cooldowns'];
 		
 		
-		//eval the string as PHP code, parsing to array in this case
-		if (!$string or $string == '')
-		{
-			$cooldowns = array();
-		}
-		else
-		{
-			$cooldowns = eval("return $string");
-		}
+		//Safely parse the stored array string without executing PHP code.
+		$cooldowns = $this->parseStoredArray($string);
 		
 		if (isset($cooldowns['votingsite' . $siteid]))
 		{
@@ -459,25 +492,13 @@ class CURUSER extends CORE
 		//get the cooldowns string from the users record
 		$string = $this->get('cooldowns');
 
-		//eval the string as PHP code, parsing to array in this case
-		if (!$string or $string == '')
-		{
-			$cooldowns = array();
-		}
-		else
-		{
-			$cooldowns = eval("return $string");
-		}
+		//Safely parse the stored array string without executing PHP code.
+		$cooldowns = $this->parseStoredArray($string);
 		
 		//set the cooldown
 		$cooldowns[$key] = $value;
 		
-		$string = 'array(';
-		foreach ($cooldowns as $key => $value)
-		{
-			$string .= "'$key' => '$value', ";
-		}
-		$string .= ');';
+		$string = $this->exportStoredArray($cooldowns);
 
 		unset($cooldowns, $key, $value);
 				
@@ -513,25 +534,13 @@ class CURUSER extends CORE
 		//get the cooldowns string from the users record
 		$string = $this->get('cooldowns');
 
-		//eval the string as PHP code, parsing to array in this case
-		if (!$string or $string == '')
-		{
-			$cooldowns = array();
-		}
-		else
-		{
-			$cooldowns = eval("return $string");
-		}
+		//Safely parse the stored array string without executing PHP code.
+		$cooldowns = $this->parseStoredArray($string);
 		
 		//unset the cooldown
 		unset($cooldowns[$key]);
 		
-		$string = 'array(';
-		foreach ($cooldowns as $key => $value)
-		{
-			$string .= "'$key' => '$value', ";
-		}
-		$string .= ');';
+		$string = $this->exportStoredArray($cooldowns);
 		
 		unset($cooldowns, $key, $value);
 
@@ -565,15 +574,8 @@ class CURUSER extends CORE
 		//get the data string from the users record
 		$string = $this->get('socialData');
 
-		//eval the string as PHP code, parsing to array in this case
-		if (!$string or $string == '')
-		{
-			$socialData = array();
-		}
-		else
-		{
-			$socialData = eval("return $string");
-		}
+		//Safely parse the stored array string without executing PHP code.
+		$socialData = $this->parseStoredArray($string);
 		
 		if (isset($socialData[$app]))
 		{
@@ -602,25 +604,13 @@ class CURUSER extends CORE
 		//get the cooldowns string from the users record
 		$string = $this->get('socialData');
 
-		//eval the string as PHP code, parsing to array in this case
-		if (!$string or $string == '')
-		{
-			$socialData = array();
-		}
-		else
-		{
-			$socialData = eval("return $string");
-		}
+		//Safely parse the stored array string without executing PHP code.
+		$socialData = $this->parseStoredArray($string);
 		
 		//set the cooldown
 		$socialData[$app] = $status;
 		
-		$string = 'array(';
-		foreach ($socialData as $key => $value)
-		{
-			$string .= "'$key' => '$value', ";
-		}
-		$string .= ');';
+		$string = $this->exportStoredArray($socialData);
 		
 		unset($socialData, $key, $value);
 		

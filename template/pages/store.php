@@ -80,7 +80,7 @@ $TPL->LoadHeader();
       	<!-- SEARCH Bar -->
       	<div class="container_3 account-wide" id="search-bar">
         	<form method="get" onsubmit="return false;" id="store-search-form">
-            	<input id="store-search-input" name="search" type="text" placeholder="Search" value="<?php echo ($search != '' ? $search : ''); ?>"/>
+            	<input id="store-search-input" name="search" type="text" placeholder="Search" value="<?php echo ($search != '' ? htmlentities($search, ENT_QUOTES) : ''); ?>"/>
                 <select id="store-quality-select" name="quality" styled="true">
                 <?php
                 echo '
