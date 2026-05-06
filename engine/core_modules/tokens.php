@@ -82,11 +82,11 @@ class Tokens
 		//check if we could use a identifier in the key
 		if ($this->identifier)
 		{
-			$this->key = uniqid(mt_rand(), true) . sha1($this->identifier . $this->salt) . uniqid(mt_rand(), true);
+			$this->key = bin2hex(random_bytes(16)) . hash_hmac('sha256', $this->identifier, $this->salt) . bin2hex(random_bytes(16));
 		}
 		else
 		{
-			$this->key = uniqid(mt_rand(), true) . uniqid(mt_rand(), true);
+			$this->key = bin2hex(random_bytes(32));
 		}
 		
 		//strip dots

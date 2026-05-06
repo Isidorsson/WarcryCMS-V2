@@ -22,8 +22,7 @@ class AccountsActivation
 	**/	
 	public function generateKey()
 	{
-		$this->key = uniqid(mt_rand(), true) . sha1($this->account . $this->salt) . uniqid(mt_rand(), true);
-		$this->key = str_replace('.', '', $this->key);
+		$this->key = bin2hex(random_bytes(16)) . hash_hmac('sha256', (string)$this->account, (string)$this->salt) . bin2hex(random_bytes(16));
 	}
 	
 	/**
