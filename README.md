@@ -1,4 +1,4 @@
-# Warcry CMS V2
+<img src="https://i.ibb.co/zT2Jp9vQ/Warcry-CMS-Png.png" width="220"/>
 
 Modern World of Warcraft CMS rebuilt for AzerothCore.
 
