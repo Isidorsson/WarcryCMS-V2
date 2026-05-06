@@ -9,10 +9,6 @@ $CORE->loggedInOrReturn();
 
 $RealmId = $CURUSER->GetRealm();
 
-//get the cooldown
-$cooldown = $CURUSER->getCooldown('teleport');
-$cooldownTime = '5 minutes';
-
 //Set the title
 $TPL->SetTitle('Teleporter');
 //Load the css
@@ -59,7 +55,7 @@ $TPL->LoadHeader();
       	<div class="teleporter">
       		
        		<div class="page-desc-holder">
-  				The Teleporter can be used while you are in-game and does not cost<br/> anything. This tool has 5 minutes cooldown.
+  				The Teleporter can be used while you are in-game and does not cost<br/> anything. There is no cooldown on this tool.
             </div>
             
             <?php
@@ -79,80 +75,9 @@ $TPL->LoadHeader();
                 <div class="map-holder" align="center">
                 	
                     <script>
-						function startCooldownTimer(element, totalCooldown, leftCooldown)
-						{
-							var cont = $(element);
-							var leftCooldown = parseInt(leftCooldown);
-							var totalCooldown = parseInt(totalCooldown);
-							
-							//update each second
-							var $interval = setInterval(function()
-							{
-								//update the cooldown
-								leftCooldown = parseInt(leftCooldown) - 1;
-								
-								var seconds = leftCooldown % 60;
-								var minutes = Math.floor((leftCooldown / 60) % 60);
-								var hours = Math.floor((leftCooldown / (60*60)) % 24);
-								var days = Math.floor((leftCooldown / (24*60*60)) % 30);
-								
-								if (seconds < 10)
-								{
-									seconds = '0' + seconds;
-								}
-								
-								//update the cooldown text
-								cont.html((minutes > 0 ? minutes + '<span>:</span>' + seconds : seconds));
-															
-								//break the interval
-								if (minutes == 0 && seconds == 0)
-								{
-									clearInterval($interval);
-									$('.cooldown-window').css('display', 'none');
-									DrawCanvases();
-								}
-								
-							}, 1000);
-						}
+						$OnCooldown = false;
 					</script>
                     
-                    <?php
-               	   
-					if ($cooldown = $CORE->convertCooldown($cooldown))
-					{
-						$totalCooldown = strtotime($cooldownTime, 0);
-						$leftCooldown = $cooldown['int'];
-						
-						echo '
-						<div class="cooldown-window">
-							<div id="text-holder">
-								<span>The teleporter is on cooldown!</span>
-								<h5 id="cooldown-timer">
-									', ($cooldown['minutes'] > 0 ? $cooldown['minutes'] . '<span>:</span>' . ($cooldown['seconds'] < 10 ? '0' . $cooldown['seconds'] : $cooldown['seconds']) : $cooldown['seconds']), '
-								</h5>
-								<p>Please wait untill the cooldown expires then you will be able to use the teleporter again!</p>
-							</div>
-                    	</div>';
-						
-						echo '
-						<!-- Visual cooldown vars -->
-						<script>
-							$OnCooldown = true;
-							//run the cooldown timer
-							startCooldownTimer(\'#cooldown-timer\', ', $totalCooldown,', ', $leftCooldown, ');
-						</script>';
-					}
-					else
-					{
-						echo '
-						<!-- Visual cooldown vars -->
-						<script>
-							$OnCooldown = false;
-						</script>';
-					}
-						   
-					?>
-                
                 	<div class="tele-back-btn" style="display:none;"><a href="javascript: void(0);" id="tp-back"></a></div>
                     
                     	<!-- STEP TWO -->

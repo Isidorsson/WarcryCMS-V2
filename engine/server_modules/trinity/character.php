@@ -378,48 +378,110 @@ class server_Character
 	public function Unstuck($guid = false, $name = false)
 	{
 		global $CORE;
-		
-		if ($guid !== false)
+
+		try
 		{
-			//get the player name
-			$res = $this->DB->prepare("SELECT name FROM `characters` WHERE `guid` = :guid LIMIT 1;");
-			$res->bindParam(':guid', $guid, PDO::PARAM_INT);
-			$res->execute();
-		
-			$row = $res->fetch(PDO::FETCH_ASSOC);
-			unset($res);
-	 
-			if (!$row)
+			if ($guid !== false)
 			{
-	  			return false;
+				$res = $this->DB->prepare("SELECT `guid`, `name`, `online` FROM `characters` WHERE `guid` = :guid LIMIT 1;");
+				$res->bindParam(':guid', $guid, PDO::PARAM_INT);
+				$res->execute();
 			}
 			else
 			{
-				$name = $row['name'];
+				$res = $this->DB->prepare("SELECT `guid`, `name`, `online` FROM `characters` WHERE `name` = :name LIMIT 1;");
+				$res->bindParam(':name', $name, PDO::PARAM_STR);
+				$res->execute();
 			}
+
+			$row = $res->fetch(PDO::FETCH_ASSOC);
+			unset($res);
+
+			if (!$row)
+			{
+				return false;
+			}
+
+			$guid = (int)$row['guid'];
+			$name = $row['name'];
+			$isOnline = ((int)$row['online'] === 1);
+
+			// Online characters must use SOAP. If SOAP is not configured, return a clear error.
+			if ($isOnline)
+			{
+				$CORE->ExecuteSoapCommand(".revive ".$name, $this->realm);
+				$soap = $CORE->ExecuteSoapCommand(".tele name ".$name." \$home", $this->realm);
+				return (is_array($soap) && isset($soap['sent']) && $soap['sent'] === true) ? true : 'Your character is online. Please fully log out from the game, then try again.';
+			}
+
+			// Offline fallback: revive and move the character to its hearthstone/homebind position directly in DB.
+			$home = false;
+			$homeQueries = array(
+				"SELECT `mapId` AS map, `posX` AS x, `posY` AS y, `posZ` AS z FROM `character_homebind` WHERE `guid` = :guid LIMIT 1",
+				"SELECT `map` AS map, `position_x` AS x, `position_y` AS y, `position_z` AS z FROM `character_homebind` WHERE `guid` = :guid LIMIT 1"
+			);
+
+			foreach ($homeQueries as $sql)
+			{
+				try
+				{
+					$st = $this->DB->prepare($sql);
+					$st->execute(array(':guid' => $guid));
+					$home = $st->fetch(PDO::FETCH_ASSOC);
+					unset($st);
+					if ($home)
+					{
+						break;
+					}
+				}
+				catch (Throwable $e)
+				{
+					$home = false;
+				}
+			}
+
+			if (!$home)
+			{
+				return 'Unable to find the character homebind location.';
+			}
+
+			$this->DB->beginTransaction();
+
+			$auras = $this->DB->prepare("DELETE FROM `character_aura` WHERE `guid` = :guid AND `spell` = :spell");
+			$auras->execute(array(':guid' => $guid, ':spell' => (int)$this->deathDebuffId));
+			unset($auras);
+
+			try
+			{
+				$corpse = $this->DB->prepare("DELETE FROM `corpse` WHERE `guid` = :guid");
+				$corpse->execute(array(':guid' => $guid));
+				unset($corpse);
+			}
+			catch (Throwable $e) {}
+
+			$upd = $this->DB->prepare("UPDATE `characters` SET `map` = :map, `position_x` = :x, `position_y` = :y, `position_z` = :z, `death_expire_time` = 0 WHERE `guid` = :guid LIMIT 1");
+			$upd->execute(array(
+				':map' => (int)$home['map'],
+				':x' => (float)$home['x'],
+				':y' => (float)$home['y'],
+				':z' => (float)$home['z'],
+				':guid' => $guid,
+			));
+			unset($upd);
+
+			$this->DB->commit();
+			return true;
 		}
-
-		//try reviving the character aswell
- 		$CORE->ExecuteSoapCommand(".revive ".$name, $this->realm);
- 		/* Old Style
-		$revive_res = $this->DB->prepare("DELETE FROM `character_aura` WHERE `guid` = :guid AND `spell` = :spell");
-		$revive_res->bindParam(':guid', $guid, PDO::PARAM_INT);
-		$revive_res->bindParam(':spell', $this->deathDebuffId, PDO::PARAM_INT);
-		$revive_res->execute();
-		unset($revive_res);
-		*/	
-		
-		//unstuck using the soap teleport command
-		$soap = $CORE->ExecuteSoapCommand(".tele name ".$name." \$home", $this->realm);
-
-		if (!$soap['sent'])
+		catch (Throwable $e)
 		{
-			return false;
+			if ($this->DB && $this->DB->inTransaction())
+			{
+				$this->DB->rollBack();
+			}
+			return $e->getMessage();
 		}
-		
-	  return true;
 	}
-	
+
 	public function getRaceString($id)
 	{
 		switch($id)

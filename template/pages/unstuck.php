@@ -232,7 +232,7 @@ works both ways, online and offline.
                <div class="clear"></div>
                
                 <div class="description-small">
-            		The <b>Unstuck</b> feature is a free service, but it has 10 minutes cooldown!
+            		The <b>Unstuck</b> feature is a free service, but it has 15 minutes cooldown!
             	</div>
              
             </div>

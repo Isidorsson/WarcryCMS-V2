@@ -144,6 +144,31 @@ class server_Commands
         }
     }
 
+
+    private function directAtLoginFlag($charName, $realmid, $flag, $label)
+    {
+        $db = $this->realmDb($realmid);
+        $char = $this->getCharacter($charName, $realmid);
+        if (!$db || !$char) {
+            return 'Direct DB ' . $label . ' failed: character or realm database was not found.';
+        }
+        if ((int)$char['online'] === 1) {
+            return 'Your character is online. Please fully log out from the game, then try again.';
+        }
+        try {
+            $stmt = $db->prepare("UPDATE `characters` SET `at_login` = (`at_login` | :flag) WHERE `guid` = :guid LIMIT 1");
+            $ok = $stmt->execute(array(':flag' => (int)$flag, ':guid' => (int)$char['guid']));
+            if (!$ok) {
+                return 'Direct DB ' . $label . ' failed: database update was rejected.';
+            }
+            $this->logDeliveryError('DIRECT DB AT_LOGIN OK', $label . ' | ' . $charName . ' flag=' . (int)$flag);
+            return true;
+        } catch (Throwable $e) {
+            $this->logDeliveryError('DIRECT DB AT_LOGIN FAILED', $label . ' | ' . $e->getMessage());
+            return 'Direct DB ' . $label . ' failed: ' . $e->getMessage();
+        }
+    }
+
     public function CheckConnection($realmid)
     {
         return $this->soap('.server info', $realmid);
@@ -201,7 +226,12 @@ class server_Commands
 
     public function FactionChange($charName, $realmid)
     {
-        return $this->soap('.character changefaction ' . $charName, $realmid);
+        $result = $this->soap('.character changefaction ' . $charName, $realmid);
+        if ($result === true) {
+            return true;
+        }
+        // AzerothCore/Trinity at_login flag: 64 = change faction on next login.
+        return $this->directAtLoginFlag($charName, $realmid, 64, 'faction change');
     }
 
     public function RaceChange($charName, $realmid)
@@ -211,7 +241,12 @@ class server_Commands
 
     public function Customize($charName, $realmid)
     {
-        return $this->soap('.character customize ' . $charName, $realmid);
+        $result = $this->soap('.character customize ' . $charName, $realmid);
+        if ($result === true) {
+            return true;
+        }
+        // AzerothCore/Trinity at_login flag: 8 = recustomize on next login.
+        return $this->directAtLoginFlag($charName, $realmid, 8, 'recustomization');
     }
 
     public function Revive($charName, $realmid)

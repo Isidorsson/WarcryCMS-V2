@@ -78,7 +78,7 @@ $ERRORS->Check('/index.php?page=recustomization');
 	$chars = new server_Character();
 
 	//start logging
-	$logs->add('PSTORE_CUSTOMIZE', 'Starting log session, initial value of the required currency: '.$accountGold.' Gold, selected realm: '.$RealmId.'.', 'pending');
+	$logs->add('PSTORE_CUSTOMIZE', 'Starting log session, required currency: '.$recustomizationPrice.' Gold, selected realm: '.$RealmId.'.', 'pending');
 	
 	//set the realm
 	if ($chars->setRealm($RealmId))
@@ -112,7 +112,7 @@ $ERRORS->Check('/index.php?page=recustomization');
 			}
 			else
 			{
-				$ERRORS->Add("The website failed to complete your order. Please contact the administration.");
+				$ERRORS->Add(is_string($recustomization) ? $recustomization : "The website failed to complete your order. Please contact the administration.");
 				//update the log
 				$logs->update(false, 'Soap failed to execute the recustomization command.', 'error');
 			}

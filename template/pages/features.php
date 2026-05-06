@@ -62,7 +62,7 @@ $TPL->LoadHeader();
             	<div class="info">
                 	<h1>Unique Teleporter</h1>
                     <h2>
-                   The Teleporter is a free tool that can be used while you are in-game and does not require you to log out. The teleporter has a 5 minute cooldown.
+                   The Teleporter is a free tool that can be used while you are in-game and does not require you to log out. The teleporter has no cooldown.
                     </h2>
                 </div>
                 <div class="clear"></div>

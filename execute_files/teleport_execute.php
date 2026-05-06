@@ -18,10 +18,6 @@ $charName = (isset($_POST['character']) ? $_POST['character'] : false);
 //bind the onsuccess message
 $ERRORS->onSuccess($charName . ' has been successfully teleported.', '/index.php?page=teleporter');
 
-//get the cooldown
-$cooldown = $CURUSER->getCooldown('teleport');
-$cooldownTime = '5 minutes';
-
 if (!$charName)
 {
 	$ERRORS->Add("Please select a character.");
@@ -34,12 +30,6 @@ if (!$RealmId)
 {
 	$ERRORS->Add("There is no realm assigned to your account.");
 }
-//check the cooldown
-if (time() < $cooldown)
-{
-	$ERRORS->Add('This tool is on a cooldown, please try again later.');
-}
-
 #########################################################################################
 
 $ERRORS->Check('/index.php?page=teleporter');
@@ -124,11 +114,9 @@ $ERRORS->Check('/index.php?page=teleporter');
 					$logs->update(false, 'The character is offline using method SQL.', 'pending');
 				}
 				
-				//update the cooldown if the character was unstucked
+				//confirm the teleport succeeded
 				if ($teleport === true || $teleport === 1 || $teleport === '1')
 				{
-					//set cooldown because we got no errors
-					$CURUSER->setCooldown('teleport', strtotime('+'.$cooldownTime));
 					//update the log
 					$logs->update(false, 'The character was teleported successfully.', 'ok');
 					//redirect
