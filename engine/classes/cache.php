@@ -33,9 +33,9 @@ class Cache
 		if (empty($cache_str))
 			return false;
 			
-		$cache = unserialize($cache_str);
-		
-		if (!isset($cache['expires']) || !isset($cache['data']))
+		$cache = unserialize($cache_str, ['allowed_classes' => false]);
+
+		if (!is_array($cache) || !isset($cache['expires']) || !isset($cache['data']))
 			return false;
 			
 		if ($cache['expires'] < time())
@@ -96,9 +96,9 @@ class Cache
     			if (substr($file, strlen($ext) * -1) === $ext && $file != '.' && $file != '..')
     			{
     				$cache_str = file_get_contents($this->repo.$file);
-    				$cache = unserialize($cache_str);
-					
-    				if (!isset($cache['expires']) || !isset($cache['data']) || !isset($cache['group']) || $cache['group'] != $group)
+    				$cache = unserialize($cache_str, ['allowed_classes' => false]);
+
+    				if (!is_array($cache) || !isset($cache['expires']) || !isset($cache['data']) || !isset($cache['group']) || $cache['group'] != $group)
     					continue;
 						
 		    		file_put_contents($this->repo . $file, '');
