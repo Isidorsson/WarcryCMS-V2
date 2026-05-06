@@ -13,6 +13,20 @@ $RealmSource = 'old';
 $search = (isset($_GET['search']) ? $_GET['search'] : '');
 $quality = (isset($_GET['quality']) ? $_GET['quality'] : '-1');
 
+// Security: allow only valid store qualities. Prevents invalid values from reaching SQL/JS.
+$allowedQualities = array('-1', '0', '1', '2', '3', '4', '5', '7');
+if (!in_array((string)$quality, $allowedQualities, true))
+{
+	$quality = '-1';
+}
+
+// Limit search length to keep requests sane. Output is escaped later.
+$search = trim((string)$search);
+if (strlen($search) > 100)
+{
+	$search = substr($search, 0, 100);
+}
+
 //define items per page
 $perPage = 6;
 
@@ -149,7 +163,7 @@ $TPL->LoadHeader();
 						$isSearch = false;
 						$isQuality = false;
 						$whereParts = array();
-						$whereParts[] = "(`realm` = :realm OR `realm` = 'all' OR FIND_IN_SET(:realm, REPLACE(`realm`, ' ', '')) > 0" . ((string)$RealmId === '1' ? " OR `realm` = :realmName" : "") . ")";
+						$whereParts[] = "(`realm` = :realmExact OR `realm` = 'all' OR FIND_IN_SET(:realmList, REPLACE(`realm`, ' ', '')) > 0" . ((string)$RealmId === '1' ? " OR `realm` = :realmName" : "") . ")";
 
 						//if we have a search
 						if ($search != '')
@@ -167,7 +181,8 @@ $TPL->LoadHeader();
 																			
 						//count the items
 						$count_res = $DB->prepare("SELECT COUNT(*) FROM `store_items` ".$where);
-						$count_res->bindValue(':realm', (string)$RealmId, PDO::PARAM_STR);
+						$count_res->bindValue(':realmExact', (string)$RealmId, PDO::PARAM_STR);
+							$count_res->bindValue(':realmList', (string)$RealmId, PDO::PARAM_STR);
 						if ((string)$RealmId === '1')
 						{
 							$count_res->bindValue(':realmName', 'AzerothCore', PDO::PARAM_STR);
