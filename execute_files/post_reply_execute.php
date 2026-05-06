@@ -77,12 +77,13 @@ $ERRORS->Check('/forums.php?page=post_reply');
 		}
 		
 		//Insert the first post
+		$authorId = (int)$CURUSER->get('id');
 		$insert2 = $DB->prepare("INSERT INTO `wcf_posts` (`topic`, `title`, `text`, `added`, `author`, `flags`) VALUES (:topic, :title, :text, :time, :author, :flags);");
 		$insert2->bindParam(':topic', $topicId, PDO::PARAM_INT);
 		$insert2->bindParam(':title', $title, PDO::PARAM_STR);
 		$insert2->bindParam(':text', $text, PDO::PARAM_STR);
 		$insert2->bindParam(':time', $time, PDO::PARAM_STR);
-		$insert2->bindParam(':author', $CURUSER->get('id'), PDO::PARAM_INT);
+		$insert2->bindParam(':author', $authorId, PDO::PARAM_INT);
 		$insert2->bindParam(':flags', $postFlags, PDO::PARAM_INT);
 		$insert2->execute();
 		

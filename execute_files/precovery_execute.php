@@ -122,9 +122,11 @@ if ($tokenReg === true)
 	############################################################################
 	## Not it's time to send the revocery mail
 	$CORE->load_CoreModule('phpmailer');
-	
+
 	//setup the PHPMailer class
 	$mail = new PHPMailer();
+	// Throw on error instead of echoing — PHPMailer 5.1 echoes to stdout otherwise.
+	$mail->exceptions = true;
 	$mail->IsMail();
 	$mail->From = $config['Email'];
 	$mail->FromName =  'Warcry WoW - Support';
@@ -173,9 +175,22 @@ if ($tokenReg === true)
 	$mail->Body    = $message;
 	
 	//check if the message was sent
-	if ($mail->Send())
+	try
 	{
-		$success = true;
+		if ($mail->Send())
+		{
+			$success = true;
+		}
+	}
+	catch (Exception $e)
+	{
+		@file_put_contents(
+			$config['RootPath'] . '/cache/mail_error.log',
+			'[' . date('Y-m-d H:i:s') . '] recovery mail failed for ' . $email . ': ' . $e->getMessage() . PHP_EOL,
+			FILE_APPEND
+		);
+		$success = false;
+		$ERRORS->Add('Failed to send password recovery mail. Please contact the administration.');
 	}
 	
 	//unset them variables

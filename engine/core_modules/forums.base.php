@@ -140,8 +140,11 @@ class WCF
 		//Detect if we need to include deleted posts
 		$IncludeDeleted = (($CURUSER->isOnline() && $CURUSER->getRank()->int() >= $config['FORUM']['Min_Rank_Post_View_Deleted']) ? true : false);
 		
-		$res = $DB->prepare("SELECT COUNT(*) AS count FROM `wcf_posts` WHERE `topic` = (SELECT `topic` FROM `wcf_posts` WHERE `id` = :post LIMIT 1) AND `id` <= :post ".(!$IncludeDeleted ? " AND `deleted_by` = '0'" : '')." ORDER BY `id` ASC;");
-		$res->bindParam(':post', $post, PDO::PARAM_INT);
+		// PDO with ATTR_EMULATE_PREPARES=false requires unique placeholder names,
+		// even when the same value is bound twice — hence :postSub / :postCmp.
+		$res = $DB->prepare("SELECT COUNT(*) AS count FROM `wcf_posts` WHERE `topic` = (SELECT `topic` FROM `wcf_posts` WHERE `id` = :postSub LIMIT 1) AND `id` <= :postCmp ".(!$IncludeDeleted ? " AND `deleted_by` = '0'" : '')." ORDER BY `id` ASC;");
+		$res->bindParam(':postSub', $post, PDO::PARAM_INT);
+		$res->bindParam(':postCmp', $post, PDO::PARAM_INT);
 		$res->execute();
 		
 		//fetch

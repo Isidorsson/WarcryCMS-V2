@@ -57,13 +57,15 @@ $ERRORS->Check('/forums.php?page=post_topic');
 	$time = $CORE->getTime();
 	//Topic Flags
 	$flags = 0;
-	
+	//Author id (assigned to local var so bindParam can take it by reference)
+	$authorId = (int)$CURUSER->get('id');
+
 	//Insert the topic record
 	$insert = $DB->prepare("INSERT INTO `wcf_topics` (`forum`, `name`, `added`, `author`, `flags`) VALUES (:forum, :name, :time, :author, :flags);");
 	$insert->bindParam(':forum', $forumId, PDO::PARAM_INT);
 	$insert->bindParam(':name', $title, PDO::PARAM_STR);
 	$insert->bindParam(':time', $time, PDO::PARAM_STR);
-	$insert->bindParam(':author', $CURUSER->get('id'), PDO::PARAM_INT);
+	$insert->bindParam(':author', $authorId, PDO::PARAM_INT);
 	$insert->bindParam(':flags', $flags, PDO::PARAM_INT);
 	$insert->execute();
 		
@@ -90,7 +92,7 @@ $ERRORS->Check('/forums.php?page=post_topic');
 		$insert2->bindParam(':title', $postTitle, PDO::PARAM_STR);
 		$insert2->bindParam(':text', $text, PDO::PARAM_STR);
 		$insert2->bindParam(':time', $time, PDO::PARAM_STR);
-		$insert2->bindParam(':author', $CURUSER->get('id'), PDO::PARAM_INT);
+		$insert2->bindParam(':author', $authorId, PDO::PARAM_INT);
 		$insert2->bindParam(':flags', $postFlags, PDO::PARAM_INT);
 		$insert2->execute();
 		

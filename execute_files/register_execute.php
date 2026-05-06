@@ -232,33 +232,48 @@ $recruiter = 0;
 				######################################
 		############ MAILING #################
 		$CORE->load_CoreModule('phpmailer');
-		
+
 		//setup the PHPMailer class
 		$mail = new PHPMailer();
+		// Throw on error instead of echoing (PHPMailer 5.1 echoes to stdout otherwise,
+		// which breaks the redirect below with "headers already sent").
+		$mail->exceptions = true;
 		$mail->IsMail();
 		$mail->From = $config['Email'];
 		$mail->FromName =  'Warcry WoW - Info';
 		$mail->AddAddress($email);
-		
+
 		//get the message html
 		$message = file_get_contents($config['RootPath'] . '/resources/mails/register_mail.html');
-				
+
 		//break if the function failed to laod HTML
 		if ($message)
-		{				
+		{
 			//replace the tags with info
 			$search = array('{USERNAME}', '{DISPLAYNAME}', '{PASSWORD}');
 			$replace = array($username, $displayName, $password);
 			$message = str_replace($search, $replace, $message);
-			
+
 			$mail->WordWrap = 50;
 			$mail->IsHTML(true);
-			
+
 			$mail->Subject = "Warcry WoW Registration";
 			$mail->Body    = $message;
 			//$mail->AltBody = "This is the body in plain text for non-HTML mail clients";
 
-	  		$mail->Send();
+			try
+			{
+				$mail->Send();
+			}
+			catch (Exception $e)
+			{
+				@file_put_contents(
+					$config['RootPath'] . '/cache/mail_error.log',
+					'[' . date('Y-m-d H:i:s') . '] register mail failed for ' . $email . ': ' . $e->getMessage() . PHP_EOL,
+					FILE_APPEND
+				);
+				// Account is already created; mail failure must not break the redirect.
+			}
 		}
 
 		######################################

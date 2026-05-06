@@ -34,6 +34,11 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --skip-log-bin
+      # Legacy CMS schema uses '0000-00-00 00:00:00' as a NOT NULL DEFAULT on
+      # several timestamp columns. MySQL 8's default sql_mode rejects these
+      # (NO_ZERO_DATE + STRICT_TRANS_TABLES). Drop those flags so legacy
+      # INSERT/UPDATE statements continue to work.
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: warcry

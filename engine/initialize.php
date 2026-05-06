@@ -3,9 +3,16 @@
 require_once __DIR__ . '/core.php';
 
 if (!defined('init_engine'))
-{	
+{
 	header('HTTP/1.0 404 not found');
 	exit;
+}
+
+// Catch any stray output from legacy vendor code (e.g. bundled PHPMailer 5.1
+// which echoes errors directly) so it cannot break header()/redirect calls.
+if (!ob_get_level())
+{
+	ob_start();
 }
 
 //setup the error handler
