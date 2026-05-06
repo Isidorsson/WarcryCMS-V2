@@ -94,8 +94,12 @@ if (!is_dir($thumb_path)) { @mkdir($thumb_path, 0755, true); }
 if (!is_writable($file_path) || !is_writable($thumb_path)) { warcry_screenshot_fail('The screenshot folder is not writable. Please check uploads/media/screenshots permissions.'); }
 
 $imageName = warcry_screenshot_safe_name($_FILES['file']['name']) . '_' . time() . '_' . mt_rand(1000, 9999) . '.' . $allowed[$mime];
-$file_src_new = $file_path . '/' . $imageName;
-$file_src_new_thumb = $thumb_path . '/' . $imageName;
+$filePathReal = realpath($file_path);
+$thumbPathReal = realpath($thumb_path);
+if ($filePathReal === false || $thumbPathReal === false) { warcry_screenshot_fail('The screenshot folder path is invalid.'); }
+$file_src_new = $filePathReal . DIRECTORY_SEPARATOR . basename($imageName);
+$file_src_new_thumb = $thumbPathReal . DIRECTORY_SEPARATOR . basename($imageName);
+if (strpos($file_src_new, $filePathReal . DIRECTORY_SEPARATOR) !== 0 || strpos($file_src_new_thumb, $thumbPathReal . DIRECTORY_SEPARATOR) !== 0) { warcry_screenshot_fail('Invalid upload path.'); }
 
 if (!move_uploaded_file($tempFile, $file_src_new)) { warcry_screenshot_fail('The website failed to upload your screenshot. Please check folder permissions.'); }
 

@@ -76,7 +76,7 @@ $ERRORS->Check('/index.php?page=factionchange');
 	$chars = new server_Character();
 
 	//start logging
-	$logs->add('PSTORE_FACTION', 'Starting log session, initial value of the required currency: '.$accountGold.' Gold, selected realm: '.$RealmId.'.', 'pending');
+	$logs->add('PSTORE_FACTION', 'Starting log session, required currency: '.$factionChangePrice.' Gold, selected realm: '.$RealmId.'.', 'pending');
 	
 	//set the realm
 	if ($chars->setRealm($RealmId))
@@ -110,7 +110,7 @@ $ERRORS->Check('/index.php?page=factionchange');
 			}
 			else
 			{
-				$ERRORS->Add("The website failed to complete your order. Please contact the administration.");
+				$ERRORS->Add(is_string($FactionChange) ? $FactionChange : "The website failed to complete your order. Please contact the administration.");
 				//update the log
 				$logs->update(false, 'Soap failed to execute the faction change command.', 'error');
 			}

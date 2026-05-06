@@ -54,7 +54,17 @@ class server_Commands
 
     private function nextId(PDO $db, $table, $column)
     {
-        $stmt = $db->query("SELECT COALESCE(MAX(`" . $column . "`), 0) + 1 AS next_id FROM `" . $table . "`");
+        // Only these core tables/columns are valid for direct mail delivery.
+        // The SQL is intentionally static so no identifier can ever come from user input.
+        if ($table === 'mail' && $column === 'id') {
+            $stmt = $db->query('SELECT COALESCE(MAX(`id`), 0) + 1 AS next_id FROM `mail`');
+        } elseif ($table === 'item_instance' && $column === 'guid') {
+            $stmt = $db->query('SELECT COALESCE(MAX(`guid`), 0) + 1 AS next_id FROM `item_instance`');
+        } else {
+            $this->logDeliveryError('DIRECT DB NEXT ID FAILED', 'Invalid table/column pair: ' . $table . '.' . $column);
+            return 0;
+        }
+
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int)$row['next_id'];
     }
@@ -134,6 +144,31 @@ class server_Commands
         }
     }
 
+
+    private function directAtLoginFlag($charName, $realmid, $flag, $label)
+    {
+        $db = $this->realmDb($realmid);
+        $char = $this->getCharacter($charName, $realmid);
+        if (!$db || !$char) {
+            return 'Direct DB ' . $label . ' failed: character or realm database was not found.';
+        }
+        if ((int)$char['online'] === 1) {
+            return 'Your character is online. Please fully log out from the game, then try again.';
+        }
+        try {
+            $stmt = $db->prepare("UPDATE `characters` SET `at_login` = (`at_login` | :flag) WHERE `guid` = :guid LIMIT 1");
+            $ok = $stmt->execute(array(':flag' => (int)$flag, ':guid' => (int)$char['guid']));
+            if (!$ok) {
+                return 'Direct DB ' . $label . ' failed: database update was rejected.';
+            }
+            $this->logDeliveryError('DIRECT DB AT_LOGIN OK', $label . ' | ' . $charName . ' flag=' . (int)$flag);
+            return true;
+        } catch (Throwable $e) {
+            $this->logDeliveryError('DIRECT DB AT_LOGIN FAILED', $label . ' | ' . $e->getMessage());
+            return 'Direct DB ' . $label . ' failed: ' . $e->getMessage();
+        }
+    }
+
     public function CheckConnection($realmid)
     {
         return $this->soap('.server info', $realmid);
@@ -191,7 +226,12 @@ class server_Commands
 
     public function FactionChange($charName, $realmid)
     {
-        return $this->soap('.character changefaction ' . $charName, $realmid);
+        $result = $this->soap('.character changefaction ' . $charName, $realmid);
+        if ($result === true) {
+            return true;
+        }
+        // AzerothCore/Trinity at_login flag: 64 = change faction on next login.
+        return $this->directAtLoginFlag($charName, $realmid, 64, 'faction change');
     }
 
     public function RaceChange($charName, $realmid)
@@ -201,7 +241,12 @@ class server_Commands
 
     public function Customize($charName, $realmid)
     {
-        return $this->soap('.character customize ' . $charName, $realmid);
+        $result = $this->soap('.character customize ' . $charName, $realmid);
+        if ($result === true) {
+            return true;
+        }
+        // AzerothCore/Trinity at_login flag: 8 = recustomize on next login.
+        return $this->directAtLoginFlag($charName, $realmid, 8, 'recustomization');
     }
 
     public function Revive($charName, $realmid)

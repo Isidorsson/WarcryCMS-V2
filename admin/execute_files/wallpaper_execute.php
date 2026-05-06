@@ -31,10 +31,34 @@ function wc_wallpapers_save_manifest($file, $items)
 
 function wc_wallpapers_safe_name($name)
 {
-    $name = strtolower($name);
-    $name = preg_replace('/[^a-z0-9\._-]+/i', '-', $name);
+    $name = strtolower((string)$name);
+    $name = basename($name);
+    $name = str_replace(array('..', '/', '\\'), '', $name);
+    $name = preg_replace('/[^a-z0-9._-]+/i', '-', $name);
     $name = trim($name, '.-_');
     return $name == '' ? 'wallpaper' : $name;
+}
+
+function wc_wallpapers_random_hex($bytes)
+{
+    if (function_exists('random_bytes')) { return bin2hex(random_bytes($bytes)); }
+    if (function_exists('openssl_random_pseudo_bytes')) { return bin2hex(openssl_random_pseudo_bytes($bytes)); }
+    return substr(sha1(uniqid('', true) . mt_rand()), 0, $bytes * 2);
+}
+
+function wc_wallpapers_safe_target($dir, $filename)
+{
+    $dirReal = realpath($dir);
+    if ($dirReal === false || !is_dir($dirReal)) { return false; }
+
+    $filename = wc_wallpapers_safe_name($filename);
+    if ($filename === '' || strpos($filename, '..') !== false || strpos($filename, '/') !== false || strpos($filename, '\\') !== false) { return false; }
+
+    $target = $dirReal . DIRECTORY_SEPARATOR . $filename;
+    $parent = realpath(dirname($target));
+    if ($parent === false || $parent !== $dirReal) { return false; }
+
+    return $target;
 }
 
 function wc_wallpapers_make_thumb($source, $dest, $mime)
@@ -90,11 +114,16 @@ if ($action == 'upload')
     $ERRORS->Check('/index.php?page=media');
 
     $ext = $allowed[$mime];
-    $base = wc_wallpapers_safe_name(pathinfo($_FILES['wallpaper']['name'], PATHINFO_FILENAME));
-    $fileName = date('YmdHis') . '-' . substr(md5(uniqid('', true)), 0, 6) . '-' . $base . '.' . $ext;
-    $target = $wallDir . '/' . $fileName;
+    $fileName = 'wallpaper-' . date('YmdHis') . '-' . wc_wallpapers_random_hex(8) . '.' . $ext;
+    $target = wc_wallpapers_safe_target($wallDir, $fileName);
     $thumbName = 'thumb-' . pathinfo($fileName, PATHINFO_FILENAME) . '.jpg';
-    $thumbTarget = $thumbDir . '/' . $thumbName;
+    $thumbTarget = wc_wallpapers_safe_target($thumbDir, $thumbName);
+
+    if ($target === false || $thumbTarget === false)
+    {
+        $ERRORS->Add('Upload path validation failed.');
+        $ERRORS->Check('/index.php?page=media');
+    }
 
     if (!move_uploaded_file($_FILES['wallpaper']['tmp_name'], $target))
     {
@@ -118,8 +147,8 @@ if ($action == 'upload')
 }
 else if ($action == 'delete')
 {
-    $file = isset($_GET['file']) ? basename($_GET['file']) : '';
-    if ($file == '') { $ERRORS->Add('Missing wallpaper file.'); }
+    $file = isset($_GET['file']) ? wc_wallpapers_safe_name($_GET['file']) : '';
+    if ($file == '' || strpos($file, '..') !== false || strpos($file, '/') !== false || strpos($file, '\\') !== false) { $ERRORS->Add('Missing or invalid wallpaper file.'); }
     $ERRORS->Check('/index.php?page=media');
 
     $items = wc_wallpapers_load_manifest($manifestFile);
@@ -134,8 +163,11 @@ else if ($action == 'delete')
         }
         $new[] = $item;
     }
-    if (file_exists($wallDir . '/' . $file)) { @unlink($wallDir . '/' . $file); }
-    if ($thumb != '' && file_exists($thumbDir . '/' . $thumb)) { @unlink($thumbDir . '/' . $thumb); }
+    $deleteTarget = wc_wallpapers_safe_target($wallDir, $file);
+    $thumbDeleteTarget = ($thumb != '') ? wc_wallpapers_safe_target($thumbDir, $thumb) : false;
+
+    if ($deleteTarget !== false && file_exists($deleteTarget)) { @unlink($deleteTarget); }
+    if ($thumbDeleteTarget !== false && file_exists($thumbDeleteTarget)) { @unlink($thumbDeleteTarget); }
     wc_wallpapers_save_manifest($manifestFile, $new);
     $ERRORS->triggerSuccess();
 }

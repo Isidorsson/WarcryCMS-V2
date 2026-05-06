@@ -33,7 +33,7 @@
   (function() {
     try {
         var a = document.createElement('a');
-        a.innerHTML = '<xyz></xyz>';
+        a.appendChild(document.createElement('xyz'));
         //if the hidden property is implemented we can assume, that the browser supports basic HTML5 Styles
         supportsHtml5Styles = ('hidden' in a);
 
@@ -64,11 +64,18 @@
    * @returns {StyleSheet} The style element.
    */
   function addStyleSheet(ownerDocument, cssText) {
-    var p = ownerDocument.createElement('p'),
+    var style = ownerDocument.createElement('style'),
         parent = ownerDocument.getElementsByTagName('head')[0] || ownerDocument.documentElement;
 
-    p.innerHTML = 'x<style>' + cssText + '</style>';
-    return parent.insertBefore(p.lastChild, parent.firstChild);
+    style.setAttribute('type', 'text/css');
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = cssText;
+    } else {
+      style.appendChild(ownerDocument.createTextNode(cssText));
+    }
+
+    return parent.insertBefore(style, parent.firstChild);
   }
 
   /**

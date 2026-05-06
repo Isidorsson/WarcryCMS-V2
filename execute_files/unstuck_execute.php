@@ -69,7 +69,7 @@ $ERRORS->Check('/index.php?page=unstuck');
 	}
 	else
 	{
-		$ERRORS->Add('The website failed to unstuck your character. Please try again later or contact the administration.');
+		$ERRORS->Add(is_string($unstuck) ? $unstuck : 'The website failed to unstuck your character. Please try again later or contact the administration.');
 	}
 	
 ####################################################################

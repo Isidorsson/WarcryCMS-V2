@@ -66,7 +66,10 @@ $dir=$config['RootPath'].'/uploads/media/screenshots'; $thumb=$dir.'/thumbs';
 if (!is_dir($dir)) @mkdir($dir,0755,true); if (!is_dir($thumb)) @mkdir($thumb,0755,true);
 if (!is_writable($dir) || !is_writable($thumb)) admin_ss_error('Screenshot upload folder is not writable.');
 $name=admin_ss_safe_name($_FILES['file']['name']).'_'.time().'_'.mt_rand(1000,9999).'.'.$allowed[$mime];
-$dest=$dir.'/'.$name; $tdest=$thumb.'/'.$name;
+$dirReal=realpath($dir); $thumbReal=realpath($thumb);
+if ($dirReal === false || $thumbReal === false) admin_ss_error('Screenshot upload folder is invalid.');
+$dest=$dirReal.DIRECTORY_SEPARATOR.basename($name); $tdest=$thumbReal.DIRECTORY_SEPARATOR.basename($name);
+if (strpos($dest, $dirReal.DIRECTORY_SEPARATOR) !== 0 || strpos($tdest, $thumbReal.DIRECTORY_SEPARATOR) !== 0) admin_ss_error('Invalid upload path.');
 if (!move_uploaded_file($_FILES['file']['tmp_name'], $dest)) admin_ss_error('Upload failed. Check folder permissions.');
 if (!admin_ss_resize($dest,$dest,$mime,1920,1080) || !admin_ss_resize($dest,$tdest,$mime,200,114)) { @unlink($dest); @unlink($tdest); admin_ss_error('The website failed to process this image.'); }
 

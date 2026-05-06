@@ -1,5 +1,7 @@
+# Warcry CMS security hardening
+# Never execute scripts from writable/cache folders.
 Options -Indexes
-<FilesMatch "\.(php|phtml|phar|php[0-9]|cgi|pl|py|sh|bash|exe|dll|com|bat|cmd|htaccess)$">
+<FilesMatch "\.(php|phtml|phar|php[0-9]|cgi|pl|py|sh|bash|asp|aspx|jsp|exe|dll|com|bat|cmd|htaccess)$">
     Require all denied
 </FilesMatch>
 RemoveHandler .php .phtml .phar

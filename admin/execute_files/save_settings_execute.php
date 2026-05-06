@@ -72,13 +72,16 @@ if (isset($_FILES['favicon']) && is_uploaded_file($_FILES['favicon']['tmp_name']
     if (isset($allowed[$ext]) && $sizeOk && ($mime === '' || $mime === $allowed[$ext] || ($ext === 'ico' && in_array($mime, array('image/x-icon','image/vnd.microsoft.icon','application/octet-stream'))))) {
         $dir = $config['RootPath'].'/uploads/settings';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
-        @file_put_contents($dir.'/.htaccess', "Options -Indexes
+        $dirReal = realpath($dir);
+        if ($dirReal === false) { $dirReal = $dir; }
+        @file_put_contents($dirReal.'/.htaccess', "Options -Indexes
 <FilesMatch \"\\.(php|phtml|phar|php[0-9]|cgi|pl|py|sh|bash|exe|dll|com|bat|cmd)$$\">
 Require all denied
 </FilesMatch>
 ");
         $file = 'favicon.'.$ext;
-        if (move_uploaded_file($_FILES['favicon']['tmp_name'], $dir.'/'.$file)) {
+        $target = $dirReal . DIRECTORY_SEPARATOR . basename($file);
+        if (strpos($target, $dirReal . DIRECTORY_SEPARATOR) === 0 && move_uploaded_file($_FILES['favicon']['tmp_name'], $target)) {
             wc_setting_save($DB, 'favicon_path', 'uploads/settings/'.$file);
             wc_setting_save($DB, 'favicon', 'uploads/settings/'.$file);
         }

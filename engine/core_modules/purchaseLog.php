@@ -49,32 +49,51 @@ class purchaseLog
 	{
 		global $DB;
 		
-		if (!$logId)
-		{
-			$logId = $this->lastLogId;
-		}
-		
-		$update = $DB->prepare("UPDATE `purchase_log` SET `text` = CONCAT(`text`, ' | Update: ', :text) ".($status ? ", `status` = :status" : "")." WHERE `id` = :logId LIMIT 1;");
-		$update->bindParam(':text', $message, PDO::PARAM_STR);
-		if ($status)
-		{
-			$update->bindParam(':status', $status, PDO::PARAM_STR);
-		}
-		$update->bindParam(':logId', $logId, PDO::PARAM_INT);
-		$update->execute();
-		
-		//check if the record was inserted
-		if ($update->rowCount() > 0)
-		{
-			unset($update);
-			return true;
-		}
-		else
+		$logId = (int)($logId ? $logId : $this->lastLogId);
+		if ($logId <= 0)
 		{
 			return false;
 		}
+		
+		/*
+		 * Do not use SQL CONCAT() here. On some databases the purchase_log.text
+		 * column is latin1 while the PDO connection/parameter is utf8, which causes
+		 * an "Illegal mix of collations" error during purchases. Build the final
+		 * log text in PHP and save it with bound parameters only.
+		 */
+		$select = $DB->prepare("SELECT `text` FROM `purchase_log` WHERE `id` = :logId LIMIT 1;");
+		$select->bindValue(':logId', $logId, PDO::PARAM_INT);
+		$select->execute();
+		$currentText = $select->fetchColumn();
+		unset($select);
+		
+		if ($currentText === false)
+		{
+			return false;
+		}
+		
+		$message = (string)$message;
+		$newText = (string)$currentText . ' | Update: ' . $message;
+		
+		$sql = "UPDATE `purchase_log` SET `text` = :text" . ($status !== false ? ", `status` = :status" : "") . " WHERE `id` = :logId LIMIT 1;";
+		$update = $DB->prepare($sql);
+		$update->bindValue(':text', $newText, PDO::PARAM_STR);
+		if ($status !== false)
+		{
+			$update->bindValue(':status', $status, PDO::PARAM_STR);
+		}
+		$update->bindValue(':logId', $logId, PDO::PARAM_INT);
+		
+		if (!$update->execute())
+		{
+			unset($update);
+			return false;
+		}
+		
+		unset($update);
+		return true;
 	}
-	
+
 	public function __destrruct()
 	{
 		return true;

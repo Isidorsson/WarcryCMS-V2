@@ -117,26 +117,68 @@ ZeroClipboard.Client.prototype = {
 		var body = document.getElementsByTagName('body')[0];
 		body.appendChild(this.div);
 		
-		this.div.innerHTML = this.getHTML( box.width, box.height );
+		this.div.appendChild( this.createMovieElement( box.width, box.height ) );
 	},
 	
-	getHTML: function(width, height) {
-		// return HTML for movie
-		var html = '';
-		var flashvars = 'id=' + this.id + 
-			'&width=' + width + 
-			'&height=' + height;
-			
+	createMovieElement: function(width, height) {
+		// Create the Flash movie using DOM APIs instead of HTML strings.
+		// This prevents HTML injection if any value is ever influenced by user input.
+		width = Math.max(0, parseInt(width, 10) || 0);
+		height = Math.max(0, parseInt(height, 10) || 0);
+
+		var flashvars = 'id=' + encodeURIComponent(this.id) +
+			'&width=' + encodeURIComponent(width) +
+			'&height=' + encodeURIComponent(height);
+
+		function addParam(objectEl, name, value) {
+			var param = document.createElement('param');
+			param.setAttribute('name', name);
+			param.setAttribute('value', value);
+			objectEl.appendChild(param);
+		}
+
 		if (navigator.userAgent.match(/MSIE/)) {
 			// IE gets an OBJECT tag
 			var protocol = location.href.match(/^https/i) ? 'https://' : 'http://';
-			html += '<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="'+protocol+'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="'+width+'" height="'+height+'" id="'+this.movieId+'" align="middle"><param name="allowScriptAccess" value="always" /><param name="allowFullScreen" value="false" /><param name="movie" value="'+ZeroClipboard.moviePath+'" /><param name="loop" value="false" /><param name="menu" value="false" /><param name="quality" value="best" /><param name="bgcolor" value="#ffffff" /><param name="flashvars" value="'+flashvars+'"/><param name="wmode" value="transparent"/></object>';
+			var objectEl = document.createElement('object');
+			objectEl.setAttribute('classid', 'clsid:d27cdb6e-ae6d-11cf-96b8-444553540000');
+			objectEl.setAttribute('codebase', protocol + 'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0');
+			objectEl.setAttribute('width', width);
+			objectEl.setAttribute('height', height);
+			objectEl.setAttribute('id', this.movieId);
+			objectEl.setAttribute('align', 'middle');
+
+			addParam(objectEl, 'allowScriptAccess', 'always');
+			addParam(objectEl, 'allowFullScreen', 'false');
+			addParam(objectEl, 'movie', ZeroClipboard.moviePath);
+			addParam(objectEl, 'loop', 'false');
+			addParam(objectEl, 'menu', 'false');
+			addParam(objectEl, 'quality', 'best');
+			addParam(objectEl, 'bgcolor', '#ffffff');
+			addParam(objectEl, 'flashvars', flashvars);
+			addParam(objectEl, 'wmode', 'transparent');
+			return objectEl;
 		}
-		else {
-			// all other browsers get an EMBED tag
-			html += '<embed id="'+this.movieId+'" src="'+ZeroClipboard.moviePath+'" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="'+width+'" height="'+height+'" name="'+this.movieId+'" align="middle" allowScriptAccess="always" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="'+flashvars+'" wmode="transparent" />';
-		}
-		return html;
+
+		// all other browsers get an EMBED tag
+		var embedEl = document.createElement('embed');
+		embedEl.setAttribute('id', this.movieId);
+		embedEl.setAttribute('src', ZeroClipboard.moviePath);
+		embedEl.setAttribute('loop', 'false');
+		embedEl.setAttribute('menu', 'false');
+		embedEl.setAttribute('quality', 'best');
+		embedEl.setAttribute('bgcolor', '#ffffff');
+		embedEl.setAttribute('width', width);
+		embedEl.setAttribute('height', height);
+		embedEl.setAttribute('name', this.movieId);
+		embedEl.setAttribute('align', 'middle');
+		embedEl.setAttribute('allowScriptAccess', 'always');
+		embedEl.setAttribute('allowFullScreen', 'false');
+		embedEl.setAttribute('type', 'application/x-shockwave-flash');
+		embedEl.setAttribute('pluginspage', 'http://www.macromedia.com/go/getflashplayer');
+		embedEl.setAttribute('flashvars', flashvars);
+		embedEl.setAttribute('wmode', 'transparent');
+		return embedEl;
 	},
 	
 	hide: function() {
@@ -155,7 +197,9 @@ ZeroClipboard.Client.prototype = {
 		// destroy control and floater
 		if (this.domElement && this.div) {
 			this.hide();
-			this.div.innerHTML = '';
+			while (this.div.firstChild) {
+				this.div.removeChild(this.div.firstChild);
+			}
 			
 			var body = document.getElementsByTagName('body')[0];
 			try { body.removeChild( this.div ); } catch(e) {;}

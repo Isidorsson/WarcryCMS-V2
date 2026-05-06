@@ -28,15 +28,38 @@ function wc_activity_table_exists($table)
     global $DB;
     static $cache = array();
 
+    // Only allow the exact activity-related table names used below.
+    // This keeps the check safe and avoids dynamic SHOW TABLES syntax that breaks on some MySQL/PDO setups.
+    $allowedTables = array(
+        'coin_activity',
+        'store_activity',
+        'paypal_logs',
+        'paymentwall_logs',
+        'article_comments',
+        'bugtracker',
+        'wcf_topics',
+        'wcf_forums',
+        'wcf_posts',
+        'images'
+    );
+
+    if (!in_array($table, $allowedTables, true)) {
+        return false;
+    }
+
     if (isset($cache[$table])) {
         return $cache[$table];
     }
 
     try {
-        $stmt = $DB->prepare('SHOW TABLES LIKE :table');
+        $stmt = $DB->prepare('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :table LIMIT 1');
+        if (!$stmt) {
+            $cache[$table] = false;
+            return false;
+        }
         $stmt->bindValue(':table', $table, PDO::PARAM_STR);
         $stmt->execute();
-        $cache[$table] = ($stmt->rowCount() > 0);
+        $cache[$table] = ((int)$stmt->fetchColumn() > 0);
     } catch (Exception $e) {
         $cache[$table] = false;
     }

@@ -16,21 +16,49 @@ function wc_ticket_redirect($realm, $suffix = '') {
     exit;
 }
 
-function wc_ticket_ident($name) {
-    return (is_string($name) && preg_match('/^[A-Za-z0-9_]+$/', $name));
+function wc_ticket_allowed_tables() {
+    return array(
+        'gm_ticket' => array(
+            'table_sql' => '`gm_ticket`',
+            'id_col'    => 'id',
+            'guid_col'  => 'playerGuid',
+            'msg_col'   => 'description',
+            'columns'   => array('id','playerGuid','description','completed','response','comment','viewed','assignedTo','closedBy','resolvedBy','needMoreHelp','lastModifiedTime','escalated')
+        ),
+        'gm_tickets' => array(
+            'table_sql' => '`gm_tickets`',
+            'id_col'    => 'ticketId',
+            'guid_col'  => 'guid',
+            'msg_col'   => 'message',
+            'columns'   => array('ticketId','guid','message','completed','response','comment','viewed','assignedTo','closedBy','resolvedBy','needMoreHelp','lastModifiedTime','escalated')
+        )
+    );
+}
+
+function wc_ticket_table_meta($table) {
+    $allowed = wc_ticket_allowed_tables();
+    return (is_string($table) && isset($allowed[$table])) ? $allowed[$table] : false;
+}
+
+function wc_ticket_safe_col_sql($table, $col) {
+    $meta = wc_ticket_table_meta($table);
+    if (!$meta || !in_array($col, $meta['columns'], true)) { return false; }
+    return '`'.$col.'`';
 }
 
 function wc_ticket_col($pdo, $table, $col) {
     try {
-        if (!wc_ticket_ident($table) || !wc_ticket_ident($col)) { return false; }
-        $q = $pdo->query('SHOW COLUMNS FROM `'.$table.'` LIKE '.$pdo->quote($col));
+        $meta = wc_ticket_table_meta($table);
+        if (!$meta || !in_array($col, $meta['columns'], true)) { return false; }
+        $q = $pdo->query('SHOW COLUMNS FROM '.$meta['table_sql'].' LIKE '.$pdo->quote($col));
         return ($q && $q->rowCount() > 0);
     } catch (Exception $e) { return false; }
 }
 
 function wc_ticket_table_exists($pdo, $table) {
     try {
-        if (!wc_ticket_ident($table)) { return false; }
+        $meta = wc_ticket_table_meta($table);
+        if (!$meta) { return false; }
         $q = $pdo->query('SHOW TABLES LIKE '.$pdo->quote($table));
         return ($q && $q->rowCount() > 0);
     } catch (Exception $e) { return false; }
@@ -38,7 +66,7 @@ function wc_ticket_table_exists($pdo, $table) {
 
 function wc_ticket_tables($pdo, $preferred = '') {
     $tables = array();
-    if ($preferred !== '' && wc_ticket_ident($preferred) && wc_ticket_table_exists($pdo, $preferred)) {
+    if ($preferred !== '' && wc_ticket_table_meta($preferred) && wc_ticket_table_exists($pdo, $preferred)) {
         $tables[] = $preferred;
     }
     foreach (array('gm_ticket', 'gm_tickets') as $t) {
@@ -50,30 +78,78 @@ function wc_ticket_tables($pdo, $preferred = '') {
 }
 
 function wc_ticket_id_col($table) {
-    return ($table === 'gm_tickets') ? 'ticketId' : 'id';
+    $meta = wc_ticket_table_meta($table);
+    return $meta ? $meta['id_col'] : 'id';
+}
+
+function wc_ticket_id_col_sql($table) {
+    $meta = wc_ticket_table_meta($table);
+    return $meta ? '`'.$meta['id_col'].'`' : '`id`';
 }
 
 function wc_ticket_guid_col($table) {
-    return ($table === 'gm_tickets') ? 'guid' : 'playerGuid';
+    $meta = wc_ticket_table_meta($table);
+    return $meta ? $meta['guid_col'] : 'playerGuid';
 }
 
 function wc_ticket_msg_col($table) {
-    return ($table === 'gm_tickets') ? 'message' : 'description';
+    $meta = wc_ticket_table_meta($table);
+    return $meta ? $meta['msg_col'] : 'description';
 }
 
 function wc_ticket_exists($pdo, $table, $id) {
-    $idCol = wc_ticket_id_col($table);
-    $st = $pdo->prepare('SELECT COUNT(*) FROM `'.$table.'` WHERE `'.$idCol.'`=:id');
+    // Keep table and identifier SQL static. This prevents SQL injection and avoids SAST false positives.
+    if ($table === 'gm_ticket') {
+        $st = $pdo->prepare('SELECT COUNT(*) FROM `gm_ticket` WHERE `id`=:id');
+    } elseif ($table === 'gm_tickets') {
+        $st = $pdo->prepare('SELECT COUNT(*) FROM `gm_tickets` WHERE `ticketId`=:id');
+    } else {
+        return false;
+    }
+
     $st->execute(array(':id' => (int)$id));
     return ((int)$st->fetchColumn() > 0);
 }
 
-function wc_ticket_update($pdo, $table, $id, $fields, $params) {
-    if (!$fields || !wc_ticket_exists($pdo, $table, $id)) { return 0; }
-    $idCol = wc_ticket_id_col($table);
-    $params[':id'] = (int)$id;
-    $st = $pdo->prepare('UPDATE `'.$table.'` SET '.implode(', ', $fields).' WHERE `'.$idCol.'`=:id LIMIT 1');
-    $st->execute($params);
+function wc_ticket_update_column($pdo, $table, $id, $column, $value) {
+    $id = (int)$id;
+    if ($id <= 0) { return 0; }
+
+    $statements = array(
+        'gm_ticket' => array(
+            'description'      => 'UPDATE `gm_ticket` SET `description`=:v WHERE `id`=:id LIMIT 1',
+            'completed'        => 'UPDATE `gm_ticket` SET `completed`=:v WHERE `id`=:id LIMIT 1',
+            'response'         => 'UPDATE `gm_ticket` SET `response`=:v WHERE `id`=:id LIMIT 1',
+            'comment'          => 'UPDATE `gm_ticket` SET `comment`=:v WHERE `id`=:id LIMIT 1',
+            'viewed'           => 'UPDATE `gm_ticket` SET `viewed`=:v WHERE `id`=:id LIMIT 1',
+            'assignedTo'       => 'UPDATE `gm_ticket` SET `assignedTo`=:v WHERE `id`=:id LIMIT 1',
+            'closedBy'         => 'UPDATE `gm_ticket` SET `closedBy`=:v WHERE `id`=:id LIMIT 1',
+            'resolvedBy'       => 'UPDATE `gm_ticket` SET `resolvedBy`=:v WHERE `id`=:id LIMIT 1',
+            'needMoreHelp'     => 'UPDATE `gm_ticket` SET `needMoreHelp`=:v WHERE `id`=:id LIMIT 1',
+            'lastModifiedTime' => 'UPDATE `gm_ticket` SET `lastModifiedTime`=:v WHERE `id`=:id LIMIT 1',
+            'escalated'        => 'UPDATE `gm_ticket` SET `escalated`=:v WHERE `id`=:id LIMIT 1'
+        ),
+        'gm_tickets' => array(
+            'message'          => 'UPDATE `gm_tickets` SET `message`=:v WHERE `ticketId`=:id LIMIT 1',
+            'completed'        => 'UPDATE `gm_tickets` SET `completed`=:v WHERE `ticketId`=:id LIMIT 1',
+            'response'         => 'UPDATE `gm_tickets` SET `response`=:v WHERE `ticketId`=:id LIMIT 1',
+            'comment'          => 'UPDATE `gm_tickets` SET `comment`=:v WHERE `ticketId`=:id LIMIT 1',
+            'viewed'           => 'UPDATE `gm_tickets` SET `viewed`=:v WHERE `ticketId`=:id LIMIT 1',
+            'assignedTo'       => 'UPDATE `gm_tickets` SET `assignedTo`=:v WHERE `ticketId`=:id LIMIT 1',
+            'closedBy'         => 'UPDATE `gm_tickets` SET `closedBy`=:v WHERE `ticketId`=:id LIMIT 1',
+            'resolvedBy'       => 'UPDATE `gm_tickets` SET `resolvedBy`=:v WHERE `ticketId`=:id LIMIT 1',
+            'needMoreHelp'     => 'UPDATE `gm_tickets` SET `needMoreHelp`=:v WHERE `ticketId`=:id LIMIT 1',
+            'lastModifiedTime' => 'UPDATE `gm_tickets` SET `lastModifiedTime`=:v WHERE `ticketId`=:id LIMIT 1',
+            'escalated'        => 'UPDATE `gm_tickets` SET `escalated`=:v WHERE `ticketId`=:id LIMIT 1'
+        )
+    );
+
+    if (!isset($statements[$table]) || !isset($statements[$table][$column])) { return 0; }
+    if (!wc_ticket_col($pdo, $table, $column)) { return 0; }
+    if (!wc_ticket_exists($pdo, $table, $id)) { return 0; }
+
+    $st = $pdo->prepare($statements[$table][$column]);
+    $st->execute(array(':v' => $value, ':id' => $id));
     return max(1, (int)$st->rowCount());
 }
 
@@ -113,48 +189,50 @@ try {
             $message = isset($_POST['message']) ? trim((string)$_POST['message']) : '';
             if ($message === '') { throw new Exception('Ticket message cannot be empty.'); }
 
-            $fields = array('`'.$msgCol.'`=:message');
-            $params = array(':message' => $message);
-            if ($hasComment)  { $fields[]='`comment`=:comment'; $params[':comment'] = isset($_POST['comment']) ? trim((string)$_POST['comment']) : ''; }
-            if ($hasResponse) { $fields[]='`response`=:response'; $params[':response'] = isset($_POST['response']) ? trim((string)$_POST['response']) : ''; }
-            if ($hasViewed)   { $fields[]='`viewed`=:viewed'; $params[':viewed'] = isset($_POST['viewed']) ? (int)$_POST['viewed'] : 1; }
-            if ($hasAssigned) { $fields[]='`assignedTo`=:assignedTo'; $params[':assignedTo'] = isset($_POST['assignedTo']) ? (int)$_POST['assignedTo'] : 0; }
-            if ($hasNeedHelp) { $fields[]='`needMoreHelp`=:needMoreHelp'; $params[':needMoreHelp'] = isset($_POST['needMoreHelp']) ? (int)$_POST['needMoreHelp'] : 1; }
-            if ($hasLastMod)  { $fields[]='`lastModifiedTime`=:lm'; $params[':lm'] = time(); }
-            $changed += wc_ticket_update($RDB, $table, $id, $fields, $params);
+            $changed += wc_ticket_update_column($RDB, $table, $id, $msgCol, $message);
+            if ($hasComment)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'comment', isset($_POST['comment']) ? trim((string)$_POST['comment']) : ''); }
+            if ($hasResponse) { $changed += wc_ticket_update_column($RDB, $table, $id, 'response', isset($_POST['response']) ? trim((string)$_POST['response']) : ''); }
+            if ($hasViewed)   { $changed += wc_ticket_update_column($RDB, $table, $id, 'viewed', isset($_POST['viewed']) ? (int)$_POST['viewed'] : 1); }
+            if ($hasAssigned) { $changed += wc_ticket_update_column($RDB, $table, $id, 'assignedTo', isset($_POST['assignedTo']) ? (int)$_POST['assignedTo'] : 0); }
+            if ($hasNeedHelp) { $changed += wc_ticket_update_column($RDB, $table, $id, 'needMoreHelp', isset($_POST['needMoreHelp']) ? (int)$_POST['needMoreHelp'] : 1); }
+            if ($hasLastMod)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'lastModifiedTime', time()); }
             continue;
         }
 
         if ($action === 'close') {
-            $fields = array(); $params = array();
             // AzerothCore reads these columns directly. A ticket is closed when closedBy or completed is non-zero.
-            if ($hasClosedBy)  { $fields[]='`closedBy`=:admin'; $params[':admin'] = $adminId; }
-            if ($hasResolved)  { $fields[]='`resolvedBy`=:admin2'; $params[':admin2'] = $adminId; }
-            if ($hasCompleted) { $fields[]='`completed`=1'; }
-            if ($hasViewed)    { $fields[]='`viewed`=1'; }
-            if ($hasNeedHelp)  { $fields[]='`needMoreHelp`=0'; }
-            if ($hasEscalated) { $fields[]='`escalated`=0'; }
-            if ($hasLastMod)   { $fields[]='`lastModifiedTime`=:lm'; $params[':lm'] = time(); }
-            $changed += wc_ticket_update($RDB, $table, $id, $fields, $params);
+            if ($hasClosedBy)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'closedBy', $adminId); }
+            if ($hasResolved)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'resolvedBy', $adminId); }
+            if ($hasCompleted) { $changed += wc_ticket_update_column($RDB, $table, $id, 'completed', 1); }
+            if ($hasViewed)    { $changed += wc_ticket_update_column($RDB, $table, $id, 'viewed', 1); }
+            if ($hasNeedHelp)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'needMoreHelp', 0); }
+            if ($hasEscalated) { $changed += wc_ticket_update_column($RDB, $table, $id, 'escalated', 0); }
+            if ($hasLastMod)   { $changed += wc_ticket_update_column($RDB, $table, $id, 'lastModifiedTime', time()); }
             continue;
         }
 
         if ($action === 'open') {
-            $fields = array(); $params = array();
-            if ($hasClosedBy)  { $fields[]='`closedBy`=0'; }
-            if ($hasResolved)  { $fields[]='`resolvedBy`=0'; }
-            if ($hasCompleted) { $fields[]='`completed`=0'; }
-            if ($hasViewed)    { $fields[]='`viewed`=0'; }
-            if ($hasNeedHelp)  { $fields[]='`needMoreHelp`=1'; }
-            if ($hasLastMod)   { $fields[]='`lastModifiedTime`=:lm'; $params[':lm'] = time(); }
-            $changed += wc_ticket_update($RDB, $table, $id, $fields, $params);
+            if ($hasClosedBy)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'closedBy', 0); }
+            if ($hasResolved)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'resolvedBy', 0); }
+            if ($hasCompleted) { $changed += wc_ticket_update_column($RDB, $table, $id, 'completed', 0); }
+            if ($hasViewed)    { $changed += wc_ticket_update_column($RDB, $table, $id, 'viewed', 0); }
+            if ($hasNeedHelp)  { $changed += wc_ticket_update_column($RDB, $table, $id, 'needMoreHelp', 1); }
+            if ($hasLastMod)   { $changed += wc_ticket_update_column($RDB, $table, $id, 'lastModifiedTime', time()); }
             continue;
         }
 
         if ($action === 'delete') {
-            $idCol = wc_ticket_id_col($table);
-            $st = $RDB->prepare('DELETE FROM `'.$table.'` WHERE `'.$idCol.'`=:id LIMIT 1');
-            $st->execute(array(':id' => $id));
+            // Keep DELETE statements fully static so scanners do not flag dynamic SQL identifiers.
+            // $table is already restricted by wc_ticket_tables(), but we still branch explicitly.
+            if ($table === 'gm_ticket') {
+                $st = $RDB->prepare('DELETE FROM `gm_ticket` WHERE `id`=:id LIMIT 1');
+            } elseif ($table === 'gm_tickets') {
+                $st = $RDB->prepare('DELETE FROM `gm_tickets` WHERE `ticketId`=:id LIMIT 1');
+            } else {
+                continue;
+            }
+
+            $st->execute(array(':id' => (int)$id));
             $changed += (int)$st->rowCount();
             continue;
         }

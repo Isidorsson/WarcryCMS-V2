@@ -3,7 +3,7 @@ include_once 'engine/initialize.php';
 
 define("init_executes", true);
  
-$execute = ((isset($_GET['take'])) ? $_GET['take'] : NULL);
+$execute = (isset($_GET['take']) ? preg_replace('/[^a-zA-Z0-9_\-]/', '', $_GET['take']) : NULL);
       
 $file = $config['RootPath'].'/admin/execute_files/'.$execute.'_execute.php';
 
@@ -54,7 +54,7 @@ $allowed = array(
 	'ticket_manage',
 );
 
-if (in_array($execute, $allowed))
+if (in_array($execute, $allowed, true))
 {
 	if (file_exists($file))
 	{
