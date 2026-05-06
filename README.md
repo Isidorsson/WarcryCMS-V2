@@ -11,8 +11,6 @@ Cleaned, secured, modernized and actively maintained for modern PHP environments
 ### Powered by AzerothCore
 
 [Website](https://www.azerothcore.org/) •
-![logo](https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/67d00cf7266d2c75571aebde_Example.svg)
-
 [Discord](https://discord.gg/RcBduqxGG5)
 
 </div>
